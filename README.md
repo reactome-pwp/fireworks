@@ -8,7 +8,7 @@ A genome-wide, hierarchical visualisation of Reactome pathways in a space-fillin
 ## What is its aim?
   Visualisation of genome-scale pathway analysis results, allowing both a quick “first glance” and rapid zooming in on interesting results.
 
-<img src="Fireworks_example.png" align="center" width="750" height="297" alt="Fireworks example">
+<img src="Fireworks_example.png" align="center" width="900" alt="Fireworks widget example">
 
 ## Main Features
 * Represents the provided Fireworks graph json file in an HTML canvas based view.
