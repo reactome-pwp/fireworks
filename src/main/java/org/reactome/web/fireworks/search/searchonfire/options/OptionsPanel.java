@@ -50,7 +50,7 @@ public class OptionsPanel extends FlowPanel implements ClickHandler{
         showAllBtn = new IconButton("", RESOURCES.uncheckedIcon(), this);
         showAllBtn.setStyleName(RESOURCES.getCSS().showAllBtn());
 
-        showAllLabel = new InlineLabel("Show pathways for all forms of this molecule");
+        showAllLabel = new InlineLabel("Show pathways for all forms of the selected molecule");
         showAllLabel.setStyleName(RESOURCES.getCSS().showAllLabel());
         showAllLabel.addClickHandler(this);
 

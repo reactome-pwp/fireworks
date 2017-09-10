@@ -102,16 +102,13 @@ public class DetailsInfoPanel extends Composite {
 
         String databaseObjectListPanel();
 
+        String leftListBorder();
+
+        String rightMain();
+
         String databaseObjectListTitle();
 
         String databaseObjectList();
 
-        String listItem();
-
-        String listItemIcon();
-
-        String listItemLink();
-
-        String listItemButton();
     }
 }

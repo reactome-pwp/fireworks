@@ -1,0 +1,100 @@
+.listItem {
+    position: relative;
+    height: 21px;
+    width: 290px;
+    cursor: default;
+}
+
+.listItem:hover {
+    /*background-color: cadetblue;*/
+    cursor: pointer;
+}
+
+.listItemIcon {
+    height: 12px;
+    width: 12px;
+    float: left;
+}
+
+.listItemLink {
+    margin-left: 3px;
+    float: left;
+    max-width: 257px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+/*.listItemLinkCollapsed {*/
+    /*max-width: 223px !important;*/
+/*}*/
+
+.listItemButton {
+    float: right;
+    margin: 2px 3px 0 15px;
+    background-color: transparent;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    padding: 2px 0 0 0;
+    outline: none;
+    opacity: 0.7;
+}
+
+.listItemButton span {
+    vertical-align: middle !important;
+    display: inline-block;
+}
+
+.listItemButton img {
+    height: 13px;
+    width: auto;
+
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.listItemButton:hover {
+    cursor: pointer !important;
+    opacity: 0.9;
+}
+
+.listItemButton:active:hover {
+    cursor: pointer !important;
+    opacity: 1;
+}
+
+.actionsPanel {
+    position: absolute;
+    background-color: rgb(30,148,208);
+    overflow: hidden;
+    height: 21px;
+    width: 0;
+
+    margin-right: 6px;
+    outline: none;
+    opacity: 0.6;
+    right: 0;
+
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+
+    background: -webkit-linear-gradient(left, rgba(255,0,0,0), rgba(30,148,208,1) 60%); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, rgba(255,0,0,0), rgba(30,148,208,1) 60%); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, rgba(255,0,0,0), rgba(30,148,208,1) 60%); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, rgba(255,0,0,0), rgba(30,148,208,1) 60%); /* Standard syntax (must be last) */
+}
+
+.actionsPanelExpanded {
+    width: 180px !important;
+    opacity: 1 !important;
+}

@@ -21,13 +21,9 @@ import org.reactome.web.fireworks.search.fallback.panels.AbstractAccordionPanel;
 import org.reactome.web.fireworks.search.fallback.searchbox.SearchBoxArrowKeysEvent;
 import org.reactome.web.fireworks.search.fallback.searchbox.SearchBoxArrowKeysHandler;
 import org.reactome.web.fireworks.search.searchonfire.events.SolrSuggestionSelectedEvent;
-import org.reactome.web.fireworks.search.searchonfire.facets.FacetChangedHandler;
-import org.reactome.web.fireworks.search.searchonfire.facets.FacetsPanel;
-import org.reactome.web.fireworks.search.searchonfire.handlers.IncludeAllFormsHandler;
 import org.reactome.web.fireworks.search.searchonfire.handlers.SolrSuggestionSelectedHandler;
 import org.reactome.web.fireworks.search.searchonfire.launcher.SolrSearchPerformedEvent;
 import org.reactome.web.fireworks.search.searchonfire.launcher.SolrSearchPerformedHandler;
-import org.reactome.web.fireworks.search.searchonfire.options.OptionsPanel;
 import org.reactome.web.fireworks.search.searchonfire.pager.PageChangedHandler;
 import org.reactome.web.fireworks.search.searchonfire.pager.Pager;
 import org.reactome.web.fireworks.search.searchonfire.solr.model.Entry;
@@ -51,12 +47,9 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
     private CellList<Entry> suggestions;
     private ListDataProvider<Entry> dataProvider;
     private Pager pager;
-    private FacetsPanel facetsPanel;
-    private OptionsPanel optionsPanel;
 
     private boolean selectFirstRow;
     private boolean selectLastRow;
-
 
     /**
      * The key provider that provides the unique ID of a DatabaseObject.
@@ -75,14 +68,6 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
 
     public HandlerRegistration addClickHandler(ClickHandler handler){
         return addHandler(handler, ClickEvent.getType());
-    }
-
-    public HandlerRegistration addFacetChangedHandler(FacetChangedHandler handler) {
-        return facetsPanel.addFacetChangedHandler(handler);
-    }
-
-    public HandlerRegistration addIncludeAllInstancesHandler(IncludeAllFormsHandler handler) {
-        return optionsPanel.addIncludeAllInstancesHandler(handler);
     }
 
     public HandlerRegistration addSolrSuggestionSelectedHandler(SolrSuggestionSelectedHandler handler) {
@@ -143,8 +128,6 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
             suggestions.setEmptyListWidget(null);
         }
         pager.setResults(searchResult);
-        facetsPanel.setResults(searchResult);
-        optionsPanel.setVisible(!entries.isEmpty());
 
         dataProvider.getList().clear();
         dataProvider.getList().addAll(entries);
@@ -169,11 +152,10 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
     @Override
     public void onSelectionChange(SelectionChangeEvent event) {
         Entry selection = selectionModel.getSelectedObject();
-        if(selection!=null && !selection.getExactType().equalsIgnoreCase("Interactor")) { //To be removed when interactors are addressed
+        if(selection!=null && !selection.getExactType().toLowerCase().equals("interactor")) { //To be removed when interactors are addressed
             ContentClient.query(selection.getId(), new ContentClientHandler.ObjectLoaded<DatabaseObject>() {
                 @Override
                 public void onObjectLoaded(DatabaseObject databaseObject) {
-                    optionsPanel.setEnable(!(databaseObject instanceof org.reactome.web.pwp.model.client.classes.Event));
                     fireEvent(new SolrSuggestionSelectedEvent(databaseObject));
                 }
 
@@ -211,16 +193,8 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
         pager = new Pager();
         pager.addStyleName(RESOURCES.getCSS().pager());
 
-        facetsPanel = new FacetsPanel();
-        facetsPanel.addStyleName(RESOURCES.getCSS().facetsPanel());
-
-        optionsPanel = new OptionsPanel();
-        optionsPanel.addStyleName(RESOURCES.getCSS().optionsPanel());
-
         add(suggestions);
         add(pager);
-        add(facetsPanel);
-        add(optionsPanel);
     }
 
 
@@ -258,9 +232,5 @@ public class SolrSuggestionPanel extends AbstractAccordionPanel implements SolrS
         String list();
 
         String pager();
-
-        String facetsPanel();
-
-        String optionsPanel();
     }
 }

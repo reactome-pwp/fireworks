@@ -11,7 +11,9 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import org.reactome.web.fireworks.controls.common.IconButton;
+import org.reactome.web.fireworks.controls.common.IconToggleButton;
 import org.reactome.web.fireworks.events.SearchKeyPressedEvent;
 import org.reactome.web.fireworks.events.SearchResetEvent;
 import org.reactome.web.fireworks.handlers.SearchKeyPressedHandler;
@@ -22,13 +24,24 @@ import org.reactome.web.fireworks.search.fallback.events.PanelExpandedEvent;
 import org.reactome.web.fireworks.search.fallback.handlers.PanelCollapsedHandler;
 import org.reactome.web.fireworks.search.fallback.handlers.PanelExpandedHandler;
 import org.reactome.web.fireworks.search.fallback.searchbox.*;
+import org.reactome.web.fireworks.search.searchonfire.events.SolrSuggestionSelectedEvent;
 import org.reactome.web.fireworks.search.searchonfire.facets.FacetChangedEvent;
 import org.reactome.web.fireworks.search.searchonfire.facets.FacetChangedHandler;
+import org.reactome.web.fireworks.search.searchonfire.facets.FacetsPanel;
+import org.reactome.web.fireworks.search.searchonfire.handlers.IncludeAllFormsHandler;
+import org.reactome.web.fireworks.search.searchonfire.handlers.SolrSuggestionSelectedHandler;
+import org.reactome.web.fireworks.search.searchonfire.options.OptionsPanel;
 import org.reactome.web.fireworks.search.searchonfire.pager.PageChangedEvent;
 import org.reactome.web.fireworks.search.searchonfire.pager.PageChangedHandler;
 import org.reactome.web.fireworks.search.searchonfire.solr.SearchResultFactory;
+import org.reactome.web.fireworks.search.searchonfire.solr.model.Entry;
 import org.reactome.web.fireworks.search.searchonfire.solr.model.SolrSearchResult;
 import org.reactome.web.fireworks.util.Console;
+import org.reactome.web.pwp.model.client.classes.DatabaseObject;
+import org.reactome.web.pwp.model.client.classes.Event;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
@@ -36,6 +49,7 @@ import org.reactome.web.fireworks.util.Console;
 @SuppressWarnings("Duplicates")
 public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, SearchBoxUpdatedHandler,
         SearchBoxArrowKeysHandler, SearchKeyPressedHandler, SearchResultFactory.SearchResultHandler,
+        SolrSuggestionSelectedHandler,
         PageChangedHandler, FacetChangedHandler {
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -47,8 +61,14 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
     private SearchBox input = null;
     private ControlButton searchBtn = null;
     private IconButton clearBtn;
+    private IconToggleButton filtersBtn;
+
+    private FlowPanel filtersPanel;
+    private FacetsPanel facetsPanel;
+    private OptionsPanel options;
 
     private Boolean isExpanded = false;
+    private Boolean isExpandedVertically = false;
 
     private Timer focusTimer;
 
@@ -77,6 +97,23 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         clearBtn.addClickHandler(event -> clearSearch());
         this.add(clearBtn);
 
+        filtersBtn = new IconToggleButton("", RESOURCES.launchClicked(), RESOURCES.clear());
+        filtersBtn.setStyleName(RESOURCES.getCSS().filtersBtn());
+        filtersBtn.setVisible(true);
+        filtersBtn.setTitle("Filter your results");
+        filtersBtn.addClickHandler(this);
+        filtersBtn.setEnabled(false);
+        this.add(filtersBtn);
+
+        filtersPanel = new FlowPanel();
+        this.add(filtersPanel);
+
+        facetsPanel = new FacetsPanel();
+        filtersPanel.add(facetsPanel);
+
+        options = new OptionsPanel();
+        filtersPanel.add(options);
+
         this.initHandlers();
         this.searchBtn.setEnabled(true);
 
@@ -86,6 +123,10 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
                 SolrSearchLauncher.this.input.setFocus(true);
             }
         };
+    }
+
+    public HandlerRegistration addIncludeAllInstancesHandler(IncludeAllFormsHandler handler) {
+        return options.addIncludeAllInstancesHandler(handler);
     }
 
     public HandlerRegistration addPanelCollapsedHandler(PanelCollapsedHandler handler){
@@ -106,11 +147,17 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
 
     @Override
     public void onClick(ClickEvent event) {
-        if(event.getSource().equals(this.searchBtn)){
-            if(!isExpanded){
+        if (event.getSource().equals(this.searchBtn)) {
+            if (!isExpanded) {
                 expandPanel();
-            }else{
+            } else {
                 collapsePanel();
+            }
+        } else if (event.getSource().equals(this.filtersBtn)) {
+            if (!isExpandedVertically) {
+                expandPanelVertically();
+            } else {
+                collapsePanelVertically();
             }
         }
     }
@@ -145,6 +192,18 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
             result.setFound(0);
             result.setFacets(null);
         }
+
+        facetsPanel.setResults(result);
+
+        List<Entry> entries = result.getEntries()!=null ? result.getEntries() : new ArrayList<>();
+        options.setVisible(!entries.isEmpty());
+        filtersBtn.setEnabled(!entries.isEmpty());
+
+        if (isExpandedVertically && entries.isEmpty()) {
+            collapsePanelVertically();
+            filtersBtn.setActive(false);
+        }
+
         fireEvent(new SolrSearchPerformedEvent(result));
     }
 
@@ -161,6 +220,13 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         }else{
             collapsePanel();
         }
+    }
+
+
+    @Override
+    public void onSuggestionSelected(SolrSuggestionSelectedEvent event) {
+        DatabaseObject databaseObject = event.getSelectedEntry();
+        options.setEnable(databaseObject!=null && !(databaseObject instanceof Event));
     }
 
     @Override
@@ -195,9 +261,16 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
             focusTimer.cancel();
         }
         removeStyleName(RESOURCES.getCSS().launchPanelExpanded());
+        collapsePanelVertically();
+        filtersBtn.setActive(false);
         input.removeStyleName(RESOURCES.getCSS().inputActive());
         isExpanded = false;
         fireEvent(new PanelCollapsedEvent());
+    }
+
+    private void collapsePanelVertically() {
+        removeStyleName(RESOURCES.getCSS().launchPanelExpandedVertically());
+        isExpandedVertically = false;
     }
 
     private void expandPanel(){
@@ -208,10 +281,18 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         focusTimer.schedule(FOCUS_IN_TEXTBOX_DELAY);
     }
 
+    private void expandPanelVertically(){
+        addStyleName(RESOURCES.getCSS().launchPanelExpandedVertically());
+        isExpandedVertically = true;
+    }
+
+
     private void initHandlers(){
         this.input.addSearchBoxUpdatedHandler(this);
         this.input.addSearchBoxArrowKeysHandler(this);
         eventBus.addHandler(SearchKeyPressedEvent.TYPE, this);
+
+        facetsPanel.addFacetChangedHandler(this);
     }
 
     private void performSearch() {
@@ -228,7 +309,6 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         RESOURCES = GWT.create(Resources.class);
         RESOURCES.getCSS().ensureInjected();
     }
-
 
     /**
      * A ClientBundle of resources used by this widget.
@@ -282,6 +362,8 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
 
         String launchPanelExpanded();
 
+        String launchPanelExpandedVertically();
+
         String launch();
 
         String input();
@@ -289,6 +371,8 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         String inputActive();
 
         String clearBtn();
+
+        String filtersBtn();
     }
 
 }

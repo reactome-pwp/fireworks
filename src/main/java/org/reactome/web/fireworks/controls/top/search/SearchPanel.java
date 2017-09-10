@@ -43,7 +43,7 @@ public class SearchPanel extends FlowPanel {
 
             SolrSuggestionPanel suggestions = new SolrSuggestionPanel();
             suggestions.addPageChangedHandler(launcher);
-            suggestions.addFacetChangedHandler(launcher);
+            suggestions.addSolrSuggestionSelectedHandler(launcher);
             // Listen to click events on suggestions and return focus on SearchBox
             suggestions.addClickHandler(event -> launcher.setFocus(true));
 
@@ -55,7 +55,7 @@ public class SearchPanel extends FlowPanel {
 
             SolrSelectionInfoPanel infoPanel = new SolrSelectionInfoPanel(eventBus, graph);
             suggestions.addSolrSuggestionSelectedHandler(infoPanel);
-            suggestions.addIncludeAllInstancesHandler(infoPanel);
+            launcher.addIncludeAllInstancesHandler(infoPanel);
             launcher.addPanelCollapsedHandler(infoPanel);
             launcher.addPanelExpandedHandler(infoPanel);
             this.add(infoPanel);
