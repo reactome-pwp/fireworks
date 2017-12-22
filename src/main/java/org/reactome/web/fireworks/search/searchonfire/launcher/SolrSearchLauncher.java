@@ -97,7 +97,7 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
         clearBtn.addClickHandler(event -> clearSearch());
         this.add(clearBtn);
 
-        filtersBtn = new IconToggleButton("", RESOURCES.launchClicked(), RESOURCES.clear());
+        filtersBtn = new IconToggleButton("", RESOURCES.options(), RESOURCES.optionsClose());
         filtersBtn.setStyleName(RESOURCES.getCSS().filtersBtn());
         filtersBtn.setVisible(true);
         filtersBtn.setTitle("Filter your results");
@@ -346,6 +346,12 @@ public class SolrSearchLauncher extends AbsolutePanel implements ClickHandler, S
 
         @Source("../../images/cancel.png")
         ImageResource clear();
+
+        @Source("../../images/search_options.png")
+        ImageResource options();
+
+        @Source("../../images/search_options_close.png")
+        ImageResource optionsClose();
     }
 
     /**
