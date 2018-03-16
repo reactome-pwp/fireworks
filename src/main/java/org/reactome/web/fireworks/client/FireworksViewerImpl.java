@@ -35,7 +35,6 @@ import org.reactome.web.fireworks.search.searchonfire.graph.model.GraphEntry;
 import org.reactome.web.fireworks.util.Coordinate;
 import org.reactome.web.fireworks.util.FireworksEventBus;
 import org.reactome.web.fireworks.util.flag.Flagger;
-import org.reactome.web.pwp.model.client.classes.Pathway;
 
 import java.util.HashSet;
 import java.util.List;
@@ -175,13 +174,13 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         } else {
             eventBus.fireEventFromSource(new NodeFlagRequestedEvent(identifier), this);
 
-            Flagger.findPathwaysToFlag(identifier, data.getSpeciesId(), new Flagger.PathwaysToFlagHandler() {
+            Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), new Flagger.PathwaysToFlagHandler() {
                 @Override
-                public void onPathwaysToFlag(List<Pathway> result) {
+                public void onPathwaysToFlag(List<String> result) {
                     Set<Edge> edgesToFlag = new HashSet<>();
                     Set<Node> nodesToFlag = new HashSet<>();
-                    for (Pathway pathway : result) {
-                        Node node = data.getNode(pathway.getDbId());
+                    for (String pathway : result) {
+                        Node node = data.getNode(pathway);
                         if (node != null){
                             nodesToFlag.add(node);
                             nodesToFlag.addAll(node.getAncestors());
