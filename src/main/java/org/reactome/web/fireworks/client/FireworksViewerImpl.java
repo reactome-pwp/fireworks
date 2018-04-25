@@ -48,7 +48,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler, MouseWheelHandler,
         TouchStartHandler, TouchEndHandler, TouchMoveHandler, TouchCancelHandler,
         FireworksVisibleAreaChangedHandler, FireworksZoomHandler, ClickHandler, /*DoubleClickHandler,*/
-        AnalysisResetHandler, ExpressionColumnChangedHandler,
+        AnalysisResetHandler, ExpressionColumnChangedHandler, OverlayTypeChangedHandler,
         ControlActionHandler, ProfileChangedHandler,
         SuggestionSelectedHandler, SuggestionHoveredHandler,
         IllustrationSelectedHandler, CanvasExportRequestedHandler,
@@ -327,6 +327,11 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
+    public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
+        doUpdate(true);
+    }
+
+    @Override
     public void onKeyDown(KeyDownEvent keyDownEvent) {
         if (isVisible() && FireworksFactory.RESPOND_TO_SEARCH_SHORTCUT) {
             int keyCode = keyDownEvent.getNativeKeyCode();
@@ -598,12 +603,12 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @SuppressWarnings("SameParameterValue")
     private void doUpdate(boolean force){
-        if(this.forceFireworksDraw){
+        if(force || this.forceFireworksDraw){
             this.forceFireworksDraw = false;
             this.drawFireworks();
             return;
         }
-        if(force || !mouseCurrent.equals(mousePrevious)){
+        if(!mouseCurrent.equals(mousePrevious)){
             Node node = this.manager.getHoveredNode(mouseCurrent);
             if(node==null){
                 if(this.hovered!=null){
@@ -684,6 +689,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
         this.eventBus.addHandler(CanvasExportRequestedEvent.TYPE, this);
+        this.eventBus.addHandler(OverlayTypeChangedEvent.TYPE, this);
 
         this.eventBus.addHandler(SuggestionSelectedEvent.TYPE, this);
         this.eventBus.addHandler(SuggestionHoveredEvent.TYPE, this);

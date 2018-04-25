@@ -144,16 +144,32 @@
     margin-right: 10px;
 }
 
+.enrichmentLegend canvas {
+    outline: none;
+}
+
+.enrichmentLegend span {
+    width: 49px;
+    text-align: center;
+}
+
 .enrichmentControl {
     /*centers in the middle*/
-    width: 260px;
-    margin-left:-130px; /* width and margin-left are related, please change both if needed */
+    width: 390px;
+    margin-left: -190px; /* width and margin-left are related, please change both if needed */
     left:50%;
 }
 
 .enrichmentControl span {
     margin: 6px 0 0 20px;
     float: left;
+    font-size: 12px;
+}
+
+.enrichmentControl select {
+    border: none;
+    margin: 5px 0 0 5px;
+    outline: none;
     font-size: 12px;
 }
 
@@ -182,6 +198,10 @@
     display: inline-block;
     white-space: nowrap;
     max-width: 225px;
+}
+
+.expressionControl canvas {
+    outline: none;
 }
 
 .slide {

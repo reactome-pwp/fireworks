@@ -22,9 +22,10 @@ public class Edge implements Drawable, QuadTreeBox {
     private Coordinate originalControl;
     private Coordinate control;
 
-    String colour;
-    double alpha = 1.0;
-    List<String> expColours;
+    private String enrichmentColour;
+    private String coverageColour;
+    private double alpha = 1.0;
+    private List<String> expColours;
 
     public Edge(Node from, Node to) {
         this.from = from;
@@ -70,8 +71,12 @@ public class Edge implements Drawable, QuadTreeBox {
      * @return the color associated with this node for normal visualisation, overrepresentation
      * analysis or species comparison.
      */
-    public String getColour() {
-        return this.colour;
+    public String getEnrichmentColour() {
+        return this.enrichmentColour;
+    }
+
+    public String getCoverageColour() {
+        return coverageColour;
     }
 
     public String getExpressionColor(int column) {
@@ -123,13 +128,18 @@ public class Edge implements Drawable, QuadTreeBox {
         return new Coordinate(x, y);
     }
 
-    public void setColour(String colour) {
-        this.colour = colour;
+    public void setEnrichmentColour(String enrichmentColour) {
+        this.enrichmentColour = enrichmentColour;
+    }
+
+    public void setCoverageColour(String coverageColour) {
+        this.coverageColour = coverageColour;
     }
 
     //Used to set a value only when it is needed.
     public void setFadeoutColour() {
-        this.colour = FireworksColours.PROFILE.getEdgeFadeoutColour();
+        this.enrichmentColour = FireworksColours.PROFILE.getEdgeFadeoutColour();
+        this.coverageColour = FireworksColours.PROFILE.getEdgeFadeoutColour();
     }
 
     public void setTransparency(double alpha){

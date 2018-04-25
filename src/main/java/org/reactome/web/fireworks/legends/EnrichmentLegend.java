@@ -18,12 +18,17 @@ import org.reactome.web.fireworks.profiles.FireworksProfile;
  */
 public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHandler, AnalysisResetHandler,
         NodeHoverHandler, NodeHoverResetHandler, NodeSelectedHandler, NodeSelectedResetHandler,
-        ProfileChangedHandler {
+        ProfileChangedHandler, OverlayTypeChangedHandler {
+
+    public static boolean COVERAGE = false;
 
     private Canvas gradient;
     private Canvas flag;
     private Node hovered;
     private Node selected;
+
+    private InlineLabel top;
+    private InlineLabel bottom;
 
     public EnrichmentLegend(EventBus eventBus) {
         super(eventBus);
@@ -35,16 +40,20 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         //Setting the legend style
         addStyleName(RESOURCES.getCSS().enrichmentLegend());
 
-        this.add(new InlineLabel("0"), 20, 5);
-        this.add(this.gradient, 10, 25);
-        this.add(this.flag, 0, 20);
-        this.add(new InlineLabel("0.05"), 12, 230);
+        top = new InlineLabel("0");
+        bottom = new InlineLabel("0.05");
+
+        this.add(top, 0, 5);
+        this.add(gradient, 10, 25);
+        this.add(flag, 0, 20);
+        this.add(bottom, 0, 230);
 
         initHandlers();
 
         this.setVisible(false);
     }
 
+    @SuppressWarnings("Duplicates")
     private Canvas createCanvas(int width, int height) {
         Canvas canvas = Canvas.createIfSupported();
         canvas.setCoordinateSpaceWidth(width);
@@ -56,7 +65,7 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
 
     @Override
     public void onNodeHover(NodeHoverEvent event) {
-        if(!event.getNode().equals(this.selected)) {
+        if (!event.getNode().equals(this.selected)) {
             this.hovered = event.getNode();
         }
         this.draw();
@@ -64,7 +73,8 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
 
     @Override
     public void onAnalysisPerformed(AnalysisPerformedEvent e) {
-        switch (e.getAnalysisType()){
+        reset();
+        switch (e.getAnalysisType()) {
             case OVERREPRESENTATION:
             case SPECIES_COMPARISON:
                 setVisible(true);
@@ -76,7 +86,7 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
 
     @Override
     public void onAnalysisReset() {
-        this.setVisible(false);
+        reset();
     }
 
     @Override
@@ -100,13 +110,23 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
 
     @Override
     public void onProfileChanged(ProfileChangedEvent event) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                fillGradient();
-                draw();
-            }
+        Scheduler.get().scheduleDeferred(() -> {
+            fillGradient();
+            draw();
         });
+    }
+
+    @Override
+    public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
+        COVERAGE = e.isCoverage();
+        if (COVERAGE) {
+            top.setText("100%");
+            bottom.setText("0%");
+        } else {
+            top.setText("0");
+            bottom.setText("0.05");
+        }
+        draw();
     }
 
     @Override
@@ -115,7 +135,14 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         this.draw();
     }
 
-    private void fillGradient(){
+    private void reset(){
+        top.setText("0");
+        bottom.setText("0.05");
+        this.setVisible(false);
+        if (COVERAGE) this.eventBus.fireEventFromSource(new OverlayTypeChangedEvent(COVERAGE = false), this);
+    }
+
+    private void fillGradient() {
         FireworksProfile profile = FireworksColours.PROFILE;
         Context2d ctx = this.gradient.getContext2d();
         CanvasGradient grd = ctx.createLinearGradient(0, 0, 30, 200);
@@ -129,64 +156,83 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         ctx.closePath();
     }
 
-    private void draw(){
-        if(!this.isVisible()) return;
+    @SuppressWarnings("Duplicates")
+    private void draw() {
+        if (!this.isVisible()) return;
 
         Context2d ctx = this.flag.getContext2d();
         ctx.clearRect(0, 0, this.flag.getOffsetWidth(), this.flag.getOffsetHeight());
 
-        if(this.hovered!=null){
+        if (this.hovered != null) {
+            Integer y = COVERAGE ? 205 : null;
             EntityStatistics statistics = this.hovered.getStatistics();
-            if(statistics!=null){
-                double pValue = statistics.getpValue();
-                if(pValue<=0.05) {
-                    String colour = FireworksColours.PROFILE.getNodeHighlightColour();
-                    int y = (int) Math.round(200 * pValue / 0.05) + 5;
-                    ctx.setFillStyle(colour);
-                    ctx.setStrokeStyle(colour);
-                    ctx.beginPath();
-                    ctx.moveTo(5, y - 5);
-                    ctx.lineTo(10, y);
-                    ctx.lineTo(5, y + 5);
-                    ctx.lineTo(5, y - 5);
-                    ctx.fill();
-                    ctx.stroke();
-                    ctx.closePath();
-
-                    ctx.beginPath();
-                    ctx.moveTo(10, y);
-                    ctx.lineTo(40, y);
-                    ctx.setStrokeStyle("yellow");
-                    ctx.stroke();
-                    ctx.closePath();
+            if (statistics != null) {
+                if (COVERAGE) {
+                    double percentage = 1d - statistics.getFound() / (double) statistics.getTotal();
+                    y = (int) Math.round(percentage * 200) + 5;
+                } else {
+                    double pValue = statistics.getpValue();
+                    if (pValue <= 0.05) {
+                        y = (int) Math.round(200 * pValue / 0.05) + 5;
+                    }
                 }
+            }
+
+            if (y != null) {
+                String colour = FireworksColours.PROFILE.getNodeHighlightColour();
+                ctx.setFillStyle(colour);
+                ctx.setStrokeStyle(colour);
+                ctx.beginPath();
+                ctx.moveTo(5, y - 5);
+                ctx.lineTo(10, y);
+                ctx.lineTo(5, y + 5);
+                ctx.lineTo(5, y - 5);
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.moveTo(10, y);
+                ctx.lineTo(40, y);
+                ctx.setStrokeStyle("yellow");
+                ctx.stroke();
+                ctx.closePath();
             }
         }
 
-        if(this.selected!=null){
+        if (this.selected != null) {
+            Integer y = COVERAGE ? 205 : null;
             EntityStatistics statistics = this.selected.getStatistics();
-            if(statistics!=null){
-                double pValue = statistics.getpValue();
-                if(pValue<=0.05) {
-                    String colour = FireworksColours.PROFILE.getNodeSelectionColour();
-                    int y = (int) Math.round(200 * pValue / 0.05) + 5;
-                    ctx.setFillStyle(colour);
-                    ctx.setStrokeStyle(colour);
-                    ctx.beginPath();
-                    ctx.moveTo(45, y - 5);
-                    ctx.lineTo(40, y);
-                    ctx.lineTo(45, y + 5);
-                    ctx.lineTo(45, y - 5);
-                    ctx.fill();
-                    ctx.stroke();
-                    ctx.closePath();
-
-                    ctx.beginPath();
-                    ctx.moveTo(10, y);
-                    ctx.lineTo(40, y);
-                    ctx.stroke();
-                    ctx.closePath();
+            if (statistics != null) {
+                if (COVERAGE) {
+                    double percentage = 1d - statistics.getFound() / (double) statistics.getTotal();
+                    y = (int) Math.round(percentage * 200) + 5;
+                } else {
+                    double pValue = statistics.getpValue();
+                    if (pValue <= 0.05) {
+                        y = (int) Math.round(200 * pValue / 0.05) + 5;
+                    }
                 }
+            }
+
+            if (y != null) {
+                String colour = FireworksColours.PROFILE.getNodeSelectionColour();
+                ctx.setFillStyle(colour);
+                ctx.setStrokeStyle(colour);
+                ctx.beginPath();
+                ctx.moveTo(45, y - 5);
+                ctx.lineTo(40, y);
+                ctx.lineTo(45, y + 5);
+                ctx.lineTo(45, y - 5);
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
+
+                ctx.beginPath();
+                ctx.moveTo(10, y);
+                ctx.lineTo(40, y);
+                ctx.stroke();
+                ctx.closePath();
             }
         }
     }
@@ -199,6 +245,7 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         this.eventBus.addHandler(NodeSelectedEvent.TYPE, this);
         this.eventBus.addHandler(NodeSelectedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
+        this.eventBus.addHandler(OverlayTypeChangedEvent.TYPE, this);
     }
 
 }

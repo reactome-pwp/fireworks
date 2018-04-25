@@ -28,11 +28,13 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
 
     private double angle;
     private double currentSize;
-    double originalSize;
+    private double originalSize;
 
-    String colour;
-    double alpha = 1.0;
-    List<String> expColours;
+    private String enrichmentColour;
+    private String coverageColour;
+
+    private double alpha = 1.0;
+    private List<String> expColours;
 
     private Coordinate currentPosition;
     Coordinate originalPosition;
@@ -128,7 +130,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     }
 
     public Set<Node> getTopLevelPathways(){
-        Set<Node> rtn = new HashSet<Node>();
+        Set<Node> rtn = new HashSet<>();
         if(this.isTopLevel()) rtn.add(this);
         for (Node parent : this.parents) {
             rtn.addAll(parent.getTopLevelPathways());
@@ -173,7 +175,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     }
 
     public Set<Node> getAncestors(){
-        Set<Node> rtn = new HashSet<Node>();
+        Set<Node> rtn = new HashSet<>();
         for (Node parent : this.parents) {
             rtn.add(parent);
             rtn.addAll(parent.getAncestors());
@@ -191,8 +193,12 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
      * @return the color associated with this node for normal visualisation, overrepresentation
      *         analysis or species comparison.
      */
-    public String getColour() {
-        return this.colour;
+    public String getEnrichmentColour() {
+        return this.enrichmentColour;
+    }
+
+    public String getCoverageColour() {
+        return coverageColour;
     }
 
     @Override
@@ -276,7 +282,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
         }
         sb.delete(sb.length()-1, sb.length()).append(")");
         String term = sb.toString();
-        /**
+        /*
          * (term1|term2)    : term is between "(" and ")" because we are creating a group, so this group can
          *                    be referred later.
          * gi               : global search and case insensitive
@@ -296,9 +302,10 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     public void initStatistics(){
         this.statistics = null;
         this.expColours = null;
-        this.colour = FireworksColours.PROFILE.getNodeInitialColour();
+        this.enrichmentColour = FireworksColours.PROFILE.getNodeInitialColour();
+        this.coverageColour = FireworksColours.PROFILE.getNodeInitialColour();
         for (Edge edge : this.edgesTo) {
-            edge.setColour(FireworksColours.PROFILE.getEdgeInitialColour());
+            edge.setEnrichmentColour(FireworksColours.PROFILE.getEdgeInitialColour());
             edge.setExpColours(null);
         }
     }
@@ -308,10 +315,15 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
         switch (result.getAnalysisType()){
             case SPECIES_COMPARISON:
             case OVERREPRESENTATION:
-                this.colour = FireworksColours.PROFILE.getNodeEnrichmentColour(statistics.getpValue());
-                String edgeColour = FireworksColours.PROFILE.getEdgeEnrichmentColour(statistics.getpValue());
-                for (Edge edge : this.edgesTo) {
-                    edge.setColour(edgeColour);
+                this.enrichmentColour = FireworksColours.PROFILE.getNodeEnrichmentColour(statistics.getpValue());
+                String edgeEnrichmentColour = FireworksColours.PROFILE.getEdgeEnrichmentColour(statistics.getpValue());
+
+                double p = 1d - statistics.getFound() / (double) statistics.getTotal();
+                this.coverageColour = FireworksColours.PROFILE.getNodeCoverageColour(p);
+                String edgeCoverageColour = FireworksColours.PROFILE.getEdgeCoverageColour(p);
+                for (Edge edge : this.edgesTo){
+                    edge.setCoverageColour(edgeCoverageColour);
+                    edge.setEnrichmentColour(edgeEnrichmentColour);
                 }
                 break;
             case EXPRESSION:
@@ -319,15 +331,13 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 if(exp!=null){
                     double min = result.getExpressionSummary().getMin();
                     double max = result.getExpressionSummary().getMax();
-                    this.expColours = new ArrayList<String>();
-                    List<String> edgeExpColours = new ArrayList<String>();
+                    this.expColours = new ArrayList<>();
+                    List<String> edgeExpColours = new ArrayList<>();
                     for (Double v : exp) {
                         this.expColours.add(FireworksColours.PROFILE.getNodeExpressionColour(statistics.getpValue(), v, min, max));
                         edgeExpColours.add(FireworksColours.PROFILE.getEdgeExpressionColour(statistics.getpValue(), v, min, max));
                     }
-                    for (Edge edge : this.edgesTo) {
-                        edge.setExpColours(edgeExpColours);
-                    }
+                    for (Edge edge : this.edgesTo) edge.setExpColours(edgeExpColours);
                 }
                 break;
             case NONE:
@@ -337,7 +347,8 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     }
 
     public void setFadeoutColour(){
-        this.colour = FireworksColours.PROFILE.getNodeFadeoutColour();
+        this.enrichmentColour = FireworksColours.PROFILE.getNodeFadeoutColour();
+        this.coverageColour = FireworksColours.PROFILE.getNodeFadeoutColour();
     }
 
     public void setTransparency(double alpha){
@@ -396,11 +407,12 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     }
 
     private List<String> getLines(){
-        List<String> rtn = new LinkedList<String>();
+        List<String> rtn = new LinkedList<>();
         if(name.length()<=15){ //Using name length behaves better than counting words
             rtn.add(this.name);
             return rtn;
         }
+        //noinspection RegExpRepeatedSpace
         String[] words = name.split("  *");
         StringBuilder line = new StringBuilder();
         for (int i = 0; i < words.length/2 ; i++) {
