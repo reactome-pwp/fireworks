@@ -42,7 +42,7 @@ public class EnrichmentControl extends LegendPanel implements ClickHandler, Chan
         this.selector.addChangeHandler(this);
         this.selector.addItem("pValue", "false");
         this.selector.addItem("coverage", "true");
-        this.add(new InlineLabel("Overlaying the"));
+        this.add(new InlineLabel("Showing"));
         this.add(this.selector);
 
         this.initHandlers();
