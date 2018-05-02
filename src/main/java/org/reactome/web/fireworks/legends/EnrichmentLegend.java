@@ -120,8 +120,8 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
     public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
         COVERAGE = e.isCoverage();
         if (COVERAGE) {
-            top.setText("100%");
-            bottom.setText("0%");
+            top.setText("0%");
+            bottom.setText("100%");
         } else {
             top.setText("0");
             bottom.setText("0.05");
@@ -164,11 +164,11 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         ctx.clearRect(0, 0, this.flag.getOffsetWidth(), this.flag.getOffsetHeight());
 
         if (this.hovered != null) {
-            Integer y = COVERAGE ? 205 : null;
+            Integer y = COVERAGE ? 5 : null;
             EntityStatistics statistics = this.hovered.getStatistics();
             if (statistics != null) {
                 if (COVERAGE) {
-                    double percentage = 1d - statistics.getFound() / (double) statistics.getTotal();
+                    double percentage = statistics.getFound() / (double) statistics.getTotal();
                     y = (int) Math.round(percentage * 200) + 5;
                 } else {
                     double pValue = statistics.getpValue();
@@ -201,11 +201,11 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
         }
 
         if (this.selected != null) {
-            Integer y = COVERAGE ? 205 : null;
+            Integer y = COVERAGE ? 5 : null;
             EntityStatistics statistics = this.selected.getStatistics();
             if (statistics != null) {
                 if (COVERAGE) {
-                    double percentage = 1d - statistics.getFound() / (double) statistics.getTotal();
+                    double percentage = statistics.getFound() / (double) statistics.getTotal();
                     y = (int) Math.round(percentage * 200) + 5;
                 } else {
                     double pValue = statistics.getpValue();
