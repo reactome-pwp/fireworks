@@ -318,7 +318,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 this.enrichmentColour = FireworksColours.PROFILE.getNodeEnrichmentColour(statistics.getpValue());
                 String edgeEnrichmentColour = FireworksColours.PROFILE.getEdgeEnrichmentColour(statistics.getpValue());
 
-                double p = 1d - statistics.getFound() / (double) statistics.getTotal();
+                double p = statistics.getFound() / (double) statistics.getTotal();
                 this.coverageColour = FireworksColours.PROFILE.getNodeCoverageColour(p);
                 String edgeCoverageColour = FireworksColours.PROFILE.getEdgeCoverageColour(p);
                 for (Edge edge : this.edgesTo){
