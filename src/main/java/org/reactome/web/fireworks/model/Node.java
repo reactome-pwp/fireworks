@@ -4,7 +4,6 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.regexp.shared.RegExp;
 import org.reactome.web.analysis.client.model.EntityStatistics;
 import org.reactome.web.analysis.client.model.SpeciesFilteredResult;
-import org.reactome.web.fireworks.data.RawNode;
 import org.reactome.web.fireworks.interfaces.Drawable;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.util.Coordinate;
@@ -45,7 +44,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     private Set<Node> children = new HashSet<>();
     private Set<Node> parents = new HashSet<>();
 
-    public Node(RawNode raw){
+    public Node(org.reactome.web.fireworks.data.Node raw){
         this.dbId = raw.getDbId();
         this.stId = raw.getStId();
         this.name = raw.getName();

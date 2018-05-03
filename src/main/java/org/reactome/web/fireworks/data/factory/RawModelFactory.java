@@ -4,9 +4,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
-import org.reactome.web.fireworks.data.RawEdge;
-import org.reactome.web.fireworks.data.RawGraph;
-import org.reactome.web.fireworks.data.RawNode;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory.Category;
+import org.reactome.web.fireworks.data.Edge;
+import org.reactome.web.fireworks.data.Graph;
+import org.reactome.web.fireworks.data.Node;
+import org.reactome.web.fireworks.data.category.EdgeCategory;
+import org.reactome.web.fireworks.data.category.NodeCategory;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -14,10 +17,11 @@ import org.reactome.web.fireworks.data.RawNode;
 public abstract class RawModelFactory {
 
     @SuppressWarnings("UnusedDeclaration")
+    @Category({Graph.class, NodeCategory.class, EdgeCategory.class})
     interface ModelAutoBeanFactory extends AutoBeanFactory {
-        AutoBean<RawNode> node();
-        AutoBean<RawEdge> edge();
-        AutoBean<RawGraph> graph();
+        AutoBean<Node> node();
+        AutoBean<Edge> edge();
+        AutoBean<Graph> graph();
     }
 
     public static <T> T getModelObject(Class<T> cls, String json) throws RawModelException {

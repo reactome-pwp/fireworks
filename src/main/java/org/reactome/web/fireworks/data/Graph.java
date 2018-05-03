@@ -5,9 +5,11 @@ import java.util.List;
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
-public interface RawGraph {
+public interface Graph {
     Long getSpeciesId();
     String getSpeciesName();
-    List<RawNode> getNodes();
-    List<RawEdge> getEdges();
+    List<Node> getNodes();
+    List<Edge> getEdges();
+
+    void initialise();
 }
