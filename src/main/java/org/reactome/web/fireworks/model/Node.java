@@ -1,6 +1,7 @@
 package org.reactome.web.fireworks.model;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.regexp.shared.RegExp;
 import org.reactome.web.analysis.client.model.EntityStatistics;
 import org.reactome.web.analysis.client.model.SpeciesFilteredResult;
@@ -44,14 +45,14 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     private Set<Node> children = new HashSet<>();
     private Set<Node> parents = new HashSet<>();
 
-    public Node(org.reactome.web.fireworks.data.Node raw){
-        this.dbId = raw.getDbId();
-        this.stId = raw.getStId();
-        this.name = raw.getName();
-        this.ratio = raw.getRatio();
-        this.angle = raw.getAngle();
+    public Node(JSONObject raw){
+        this.dbId = (long) raw.get("dbId").isNumber().doubleValue();
+        this.stId = raw.get("stId").isString().stringValue();
+        this.name = raw.get("name").isString().stringValue();
+        this.ratio = raw.get("ratio").isNumber().doubleValue();
+        this.angle = raw.get("angle").isNumber().doubleValue();
         this.currentSize = this.originalSize = (ratio + 0.025) * 15;
-        this.currentPosition = this.originalPosition = new Coordinate(raw.getX(), raw.getY());
+        this.currentPosition = this.originalPosition = new Coordinate(raw.get("x").isNumber().doubleValue(), raw.get("y").isNumber().doubleValue());
         initStatistics(); //Colour is set in initStatistics method
     }
 

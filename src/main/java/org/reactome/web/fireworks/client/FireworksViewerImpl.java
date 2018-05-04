@@ -25,7 +25,6 @@ import org.reactome.web.fireworks.model.Edge;
 import org.reactome.web.fireworks.model.FireworksData;
 import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
-import org.reactome.web.fireworks.model.factory.ModelException;
 import org.reactome.web.fireworks.model.factory.ModelFactory;
 import org.reactome.web.fireworks.search.fallback.events.SuggestionHoveredEvent;
 import org.reactome.web.fireworks.search.fallback.events.SuggestionSelectedEvent;
@@ -95,7 +94,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         } catch (FireworksCanvas.CanvasNotSupportedException e) {
             initWidget(new Label("Canvas not supported"));
             fireEvent(new CanvasNotSupportedEvent());
-        } catch (ModelException e) {
+        } catch (RuntimeException e) {
             initWidget(new Label(e.getMessage()));
             e.printStackTrace();
         }
