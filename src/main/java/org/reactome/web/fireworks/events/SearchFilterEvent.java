@@ -2,7 +2,10 @@ package org.reactome.web.fireworks.events;
 
 import com.google.gwt.event.shared.GwtEvent;
 import org.reactome.web.fireworks.handlers.SearchFilterHandler;
-import org.reactome.web.fireworks.search.searchonfire.graph.model.GraphEntry;
+
+import org.reactome.web.pwp.model.client.classes.DatabaseObject;
+
+import java.util.Collection;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -10,10 +13,10 @@ import org.reactome.web.fireworks.search.searchonfire.graph.model.GraphEntry;
 public class SearchFilterEvent extends GwtEvent<SearchFilterHandler> {
     public static final Type<SearchFilterHandler> TYPE = new Type<>();
 
-    private GraphEntry[] graphEntries;
+    private Collection<? extends DatabaseObject> pathways;
 
-    public SearchFilterEvent(GraphEntry[] graphEntries) {
-        this.graphEntries = graphEntries;
+    public SearchFilterEvent(Collection<? extends DatabaseObject> pathways) {
+        this.pathways = pathways;
     }
 
     @Override
@@ -26,14 +29,14 @@ public class SearchFilterEvent extends GwtEvent<SearchFilterHandler> {
         handler.onSearchFilterEvent(this);
     }
 
-    public GraphEntry[] getResult() {
-        return graphEntries;
+    public Collection<? extends DatabaseObject> getResult() {
+        return pathways;
     }
 
     @Override
     public String toString() {
         return "SearchFilterEvent{" +
-                "numberOfElementsFiltered=" + graphEntries.length +
+                "numberOfElementsFiltered=" + (pathways != null ? pathways.size() : 0) +
                 '}';
     }
 }
