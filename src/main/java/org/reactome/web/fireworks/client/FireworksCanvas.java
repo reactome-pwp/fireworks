@@ -10,7 +10,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RequiresResize;
-import org.reactome.web.fireworks.controls.common.RadialMenu;
 import org.reactome.web.fireworks.controls.navigation.NavigationControlPanel;
 import org.reactome.web.fireworks.controls.settings.HideableContainerPanel;
 import org.reactome.web.fireworks.controls.settings.RightContainerPanel;
@@ -142,10 +141,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         //Launcher panels
         this.add(new LeftTopLauncherPanel(eventBus, graph));
         this.add(new RightTopLauncherPanel(eventBus));
-
-        //Radial Menu
-        RadialMenu radialMenu = new RadialMenu(eventBus);
-        this.add(radialMenu);
 
         //Settings panel
         rightContainerPanel.add(new HideableContainerPanel(eventBus));
