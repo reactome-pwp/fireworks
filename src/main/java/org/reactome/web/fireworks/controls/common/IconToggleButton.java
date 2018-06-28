@@ -1,5 +1,6 @@
 package org.reactome.web.fireworks.controls.common;
 
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -11,14 +12,12 @@ public class IconToggleButton extends IconButton {
     private ImageResource img;
     private ImageResource imgActive;
 
-    public IconToggleButton(String text, ImageResource img, ImageResource imgActive) {
+    public IconToggleButton(String text, ImageResource img, ImageResource imgActive, ClickHandler handler) {
         super(text, img);
         this.img = img;
         this.imgActive = imgActive;
-        addClickHandler(event -> {
-            isActive = !isActive;
-            update();
-        });
+
+        addClickHandler(handler);
     }
 
     public boolean isActive() {
