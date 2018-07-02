@@ -1,0 +1,156 @@
+.container {
+    /*overflow: scroll;*/
+    /*max-height: 380px;*/
+    margin-top: 5px;
+
+    background-color: rgba(255, 255, 255, 0.9);
+    border: rgba(88, 195, 229, 0.8) solid 2px;
+    border-radius: 8px 8px 0 0;
+
+    font-family: Arial Unicode MS, Arial, sans-serif !important;
+}
+
+.header {
+    background-color: rgba(88, 195, 229, 0.9);
+    border-radius: 5px 5px 0 0;
+
+    color: white;
+    font-size: x-small;
+
+    line-height: 1.3em;
+    padding-left: 5px;
+}
+
+.mainPanel {
+    padding: 0 5px 5px 5px;
+    /*background-color: pink;*/
+    overflow: scroll;
+    max-height: 400px;
+}
+
+.loaderPanel div {
+    display: inline-block;
+    margin: 1px 1px 1px 5px;
+    vertical-align: top;
+    color: #4a88da;
+}
+
+.loaderContainer {
+    height: 12px;
+    text-align: center;
+}
+
+.loader {
+    width: 16px;
+    height: 16px;
+    margin: 0 auto;
+    border: 2px solid #4a88da;
+    border-radius: 50%;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    animation: spin 875ms infinite linear;
+    -o-animation: spin 875ms infinite linear;
+    -ms-animation: spin 875ms infinite linear;
+    -webkit-animation: spin 875ms infinite linear;
+    -moz-animation: spin 875ms infinite linear;
+}
+
+
+
+@keyframes spin {
+    100%{ transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-o-keyframes spin {
+    100%{ -o-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-ms-keyframes spin {
+    100%{ -ms-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spin {
+    100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@-moz-keyframes spin {
+    100%{ -moz-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+.databaseObjectListPanel {
+    margin-top: 7px;
+}
+
+.databaseObjectListTitle {
+    font-weight: bolder;
+    margin-top: 5px;
+    background-color: rgba(165, 226, 249, 0.8);
+}
+
+.databaseObjectList {
+    width: 100%;
+    margin-left: 5px;
+    max-height: 72px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;        /* Used to hide the scrollbars */
+}
+
+.listItem {
+    height: 21px;
+    width: 327px;
+}
+
+.listItemIcon {
+    height: 12px;
+    width: 12px;
+    float: left;
+}
+
+.listItemLink {
+    margin-left: 3px;
+    float: left;
+    max-width: 223px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.listItemButton {
+    float: right;
+    margin-right: 8px;
+    background-color: transparent;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    padding: 2px 0 0 0;
+    outline: none;
+    opacity: 0.7;
+}
+
+.listItemButton span {
+    vertical-align: middle !important;
+    display: inline-block;
+}
+
+.listItemButton img {
+    height: 13px;
+    width: auto;
+
+    user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.listItemButton:hover {
+    cursor: pointer !important;
+    opacity: 0.9;
+}
+
+.listItemButton:active:hover {
+    cursor: pointer !important;
+    opacity: 1;
+}

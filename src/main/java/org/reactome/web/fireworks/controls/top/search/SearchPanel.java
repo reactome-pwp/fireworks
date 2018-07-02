@@ -5,13 +5,11 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.FlowPanel;
-import org.reactome.web.fireworks.client.FireworksFactory;
 import org.reactome.web.fireworks.model.Graph;
-import org.reactome.web.fireworks.search.fallback.launcher.SearchLauncher;
-import org.reactome.web.fireworks.search.fallback.suggester.SuggestionPanel;
-import org.reactome.web.fireworks.search.searchonfire.infopanel.SolrSelectionInfoPanel;
-import org.reactome.web.fireworks.search.searchonfire.launcher.SolrSearchLauncher;
-import org.reactome.web.fireworks.search.searchonfire.suggester.SolrSuggestionPanel;
+import org.reactome.web.fireworks.search.SearchLauncher;
+import org.reactome.web.fireworks.search.autocomplete.AutoCompletePanel;
+import org.reactome.web.fireworks.search.details.DetailsInfoPanel;
+import org.reactome.web.fireworks.search.results.ResultsPanel;
 
 
 /**
@@ -23,43 +21,37 @@ public class SearchPanel extends FlowPanel {
         //Setting the legend style
         setStyleName(RESOURCES.getCSS().searchPanel());
 
-        if(!FireworksFactory.SOLR_SEARCH) {
-            final SearchLauncher launcher = new SearchLauncher(eventBus, graph);
-            this.add(launcher);
-            SuggestionPanel suggestions = new SuggestionPanel();
-            suggestions.addSuggestionSelectedHandler(launcher);
-            suggestions.addSuggestionHoveredHandler(launcher);
-            // Listen to click events on suggestions and return focus on SearchBox
-            suggestions.addClickHandler(event -> launcher.setFocus(true));
+        final SearchLauncher launcher = new SearchLauncher(eventBus, graph);
+        this.add(launcher);
 
-            launcher.addSearchPerformedHandler(suggestions);
-            launcher.addPanelCollapsedHandler(suggestions);
-            launcher.addPanelExpandedHandler(suggestions);
-            launcher.addSearchBoxArrowKeysHandler(suggestions);
-            this.add(suggestions);
-        } else {
-            final SolrSearchLauncher launcher = new SolrSearchLauncher(eventBus, graph);
-            this.add(launcher);
+        AutoCompletePanel autoCompletePanel = new AutoCompletePanel();
+        autoCompletePanel.addAutoCompleteSelectedHandler(launcher);
+//        launcher.addSearchBoxArrowKeysHandler(autoCompletePanel);
+        launcher.addSearchPerformedHandler(autoCompletePanel);
+        launcher.addAutoCompleteRequestedHandler(autoCompletePanel);
+        launcher.addPanelCollapsedHandler(autoCompletePanel);
+        launcher.addPanelExpandedHandler(autoCompletePanel);
+        launcher.addOptionsCollapsedHandler(autoCompletePanel);
+        launcher.addOptionsExpandedHandler(autoCompletePanel);
+        this.add(autoCompletePanel);
 
-            SolrSuggestionPanel suggestions = new SolrSuggestionPanel();
-            suggestions.addPageChangedHandler(launcher);
-            suggestions.addSolrSuggestionSelectedHandler(launcher);
-            // Listen to click events on suggestions and return focus on SearchBox
-            suggestions.addClickHandler(event -> launcher.setFocus(true));
+        ResultsPanel results = new ResultsPanel(eventBus);
+        // Listen to click events on results and return focus on SearchLauncher
+        results.addClickHandler(event -> launcher.setFocus(true));
+        results.addFacetsLoadedHandler(launcher);
+        launcher.addSearchPerformedHandler(results);
+        launcher.addAutoCompleteRequestedHandler(results);
+        launcher.addPanelCollapsedHandler(results);
+        launcher.addPanelExpandedHandler(results);
+        this.add(results);
 
-            launcher.addSolrSearchPerformedHandler(suggestions);
-            launcher.addPanelCollapsedHandler(suggestions);
-            launcher.addPanelExpandedHandler(suggestions);
-            launcher.addSearchBoxArrowKeysHandler(suggestions);
-            this.add(suggestions);
-
-            SolrSelectionInfoPanel infoPanel = new SolrSelectionInfoPanel(eventBus, graph);
-            suggestions.addSolrSuggestionSelectedHandler(infoPanel);
-            launcher.addIncludeAllInstancesHandler(infoPanel);
-            launcher.addPanelCollapsedHandler(infoPanel);
-            launcher.addPanelExpandedHandler(infoPanel);
-            this.add(infoPanel);
-        }
+        DetailsInfoPanel details = new DetailsInfoPanel(eventBus);
+        results.addResultSelectedHandler(details);
+        launcher.addSearchPerformedHandler(details);
+        launcher.addAutoCompleteRequestedHandler(details);
+        launcher.addPanelCollapsedHandler(details);
+        launcher.addPanelExpandedHandler(details);
+        this.add(details);
     }
 
 

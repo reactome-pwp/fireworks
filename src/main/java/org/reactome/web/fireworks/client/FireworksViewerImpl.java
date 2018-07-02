@@ -27,15 +27,14 @@ import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.model.factory.ModelException;
 import org.reactome.web.fireworks.model.factory.ModelFactory;
-import org.reactome.web.fireworks.search.fallback.events.SuggestionHoveredEvent;
-import org.reactome.web.fireworks.search.fallback.events.SuggestionSelectedEvent;
-import org.reactome.web.fireworks.search.fallback.handlers.SuggestionHoveredHandler;
-import org.reactome.web.fireworks.search.fallback.handlers.SuggestionSelectedHandler;
-import org.reactome.web.fireworks.search.searchonfire.graph.model.GraphEntry;
+import org.reactome.web.fireworks.search.events.SuggestionHoveredEvent;
+import org.reactome.web.fireworks.search.events.SuggestionSelectedEvent;
+import org.reactome.web.fireworks.search.handlers.SuggestionHoveredHandler;
+import org.reactome.web.fireworks.search.handlers.SuggestionSelectedHandler;
 import org.reactome.web.fireworks.util.Coordinate;
 import org.reactome.web.fireworks.util.FireworksEventBus;
 import org.reactome.web.fireworks.util.flag.Flagger;
-import org.reactome.web.pwp.model.client.classes.Pathway;
+import org.reactome.web.pwp.model.client.classes.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -54,8 +53,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         SuggestionSelectedHandler, SuggestionHoveredHandler,
         IllustrationSelectedHandler, CanvasExportRequestedHandler,
         KeyDownHandler, SearchFilterHandler, SearchResetHandler,
-        GraphEntryHoveredHandler, GraphEntrySelectedHandler,
-        NodeFlaggedResetHandler {
+        SearchItemHoveredHandler, SearchItemSelectedHandler,
+        NodeFlagRequestedHandler, NodeFlaggedResetHandler {
 
     private EventBus eventBus;
 
@@ -175,29 +174,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         } else {
             eventBus.fireEventFromSource(new NodeFlagRequestedEvent(identifier), this);
 
-            Flagger.findPathwaysToFlag(identifier, data.getSpeciesId(), new Flagger.PathwaysToFlagHandler() {
-                @Override
-                public void onPathwaysToFlag(List<Pathway> result) {
-                    Set<Edge> edgesToFlag = new HashSet<>();
-                    Set<Node> nodesToFlag = new HashSet<>();
-                    for (Pathway pathway : result) {
-                        Node node = data.getNode(pathway.getDbId());
-                        if (node != null){
-                            nodesToFlag.add(node);
-                            nodesToFlag.addAll(node.getAncestors());
-                        }
-                    }
-                    for (Node node : nodesToFlag) {
-                        edgesToFlag.addAll(node.getEdgesTo());
-                    }
-                    setFlaggedElements(identifier, nodesToFlag, edgesToFlag);
-                }
-
-                @Override
-                public void onPathwaysToFlagError() {
-                    //TODO: Nothing to flag
-                }
-            });
+            findPathwaysToFlag(identifier);
         }
     }
 
@@ -309,17 +286,17 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
-    public void onGraphEntryHovered(GraphEntryHoveredEvent event) {
-        if(event.getHoveredEntry()!=null) {
-            highlightNode(event.getHoveredEntry().getStId());
+    public void onSearchItemHovered(SearchItemHoveredEvent event) {
+        if(event.getHoveredIdentifier()!=null) {
+            highlightNode(event.getHoveredIdentifier());
         } else {
             resetHighlight();
         }
     }
 
     @Override
-    public void onGraphEntrySelected(GraphEntrySelectedEvent event) {
-        selectNode(event.getSelectedEntry().getStId());
+    public void onSearchItemSelected(SearchItemSelectedEvent event) {
+        selectNode(event.getSelectedIdentifier());
     }
 
     @Override
@@ -340,6 +317,44 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
                 eventBus.fireEventFromSource(new SearchKeyPressedEvent(), this);
             }
         }
+    }
+
+    @Override
+    public void onNodeFlagRequested(NodeFlagRequestedEvent event) {
+        if(event.getSource().equals(this)) return;
+
+        String identifier = event.getTerm();
+        if (identifier == null || identifier.isEmpty()) {
+            resetFlaggedItems();
+        } else {
+            findPathwaysToFlag(identifier);
+        }
+    }
+
+    private void findPathwaysToFlag(String identifier) {
+        Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), new Flagger.PathwaysToFlagHandler() {
+            @Override
+            public void onPathwaysToFlag(List<String> result) {
+                Set<Edge> edgesToFlag = new HashSet<>();
+                Set<Node> nodesToFlag = new HashSet<>();
+                for (String pathway : result) {
+                    Node node = data.getNode(pathway);
+                    if (node != null){
+                        nodesToFlag.add(node);
+                        nodesToFlag.addAll(node.getAncestors());
+                    }
+                }
+                for (Node node : nodesToFlag) {
+                    edgesToFlag.addAll(node.getEdgesTo());
+                }
+                setFlaggedElements(identifier, nodesToFlag, edgesToFlag);
+            }
+
+            @Override
+            public void onPathwaysToFlagError() {
+                //TODO: Nothing to flag
+            }
+        });
     }
 
     @Override
@@ -424,8 +439,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     @Override
     public void onSearchFilterEvent(SearchFilterEvent event) {
         Set<Node> filteredNodes = new HashSet<>();
-        for (GraphEntry graphEntry : event.getResult()) {
-            Node node = data.getNode(graphEntry.getStId());
+        for (DatabaseObject pathway : event.getResult()) {
+            Node node = data.getNode(pathway.getStId());
             if(node!=null) {
                 filteredNodes.add(node);
             }
@@ -682,6 +697,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         this.eventBus.addHandler(FireworksVisibleAreaChangedEvent.TYPE, this);
         this.eventBus.addHandler(FireworksZoomEvent.TYPE, this);
         this.eventBus.addHandler(IllustrationSelectedEvent.TYPE, this);
+        this.eventBus.addHandler(NodeFlagRequestedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
         this.eventBus.addHandler(CanvasExportRequestedEvent.TYPE, this);
@@ -690,8 +706,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         this.eventBus.addHandler(SuggestionHoveredEvent.TYPE, this);
         this.eventBus.addHandler(SearchFilterEvent.TYPE, this);
         this.eventBus.addHandler(SearchResetEvent.TYPE, this);
-        this.eventBus.addHandler(GraphEntryHoveredEvent.TYPE, this);
-        this.eventBus.addHandler(GraphEntrySelectedEvent.TYPE, this);
+        this.eventBus.addHandler(SearchItemHoveredEvent.TYPE, this);
+        this.eventBus.addHandler(SearchItemSelectedEvent.TYPE, this);
     }
 
     private boolean isDeltaValid(Coordinate delta) {
