@@ -53,6 +53,9 @@ public final class FireworksProfile {
             return this.profile.getNode().getHit();
         }
     }
+    public final String getNodeCoverageColour(double p) {
+        return this.nodeEnrichment.getColor(p);
+    }
     public final String getNodeExpressionColour(double p) {
         return this.nodeExpression.getColor(p);
     }
@@ -85,6 +88,9 @@ public final class FireworksProfile {
         }else{
             return this.profile.getEdge().getHit();
         }
+    }
+    public final String getEdgeCoverageColour(double p) {
+        return this.edgeEnrichment.getColor(p);
     }
     public final String getEdgeExpressionColour(double p, double expression, double min, double max) {
         if(p<=THRESHOLD) {

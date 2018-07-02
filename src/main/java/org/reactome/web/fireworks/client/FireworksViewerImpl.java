@@ -25,7 +25,6 @@ import org.reactome.web.fireworks.model.Edge;
 import org.reactome.web.fireworks.model.FireworksData;
 import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
-import org.reactome.web.fireworks.model.factory.ModelException;
 import org.reactome.web.fireworks.model.factory.ModelFactory;
 import org.reactome.web.fireworks.search.events.SuggestionHoveredEvent;
 import org.reactome.web.fireworks.search.events.SuggestionSelectedEvent;
@@ -34,7 +33,6 @@ import org.reactome.web.fireworks.search.handlers.SuggestionSelectedHandler;
 import org.reactome.web.fireworks.util.Coordinate;
 import org.reactome.web.fireworks.util.FireworksEventBus;
 import org.reactome.web.fireworks.util.flag.Flagger;
-import org.reactome.web.pwp.model.client.classes.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +46,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler, MouseWheelHandler,
         TouchStartHandler, TouchEndHandler, TouchMoveHandler, TouchCancelHandler,
         FireworksVisibleAreaChangedHandler, FireworksZoomHandler, ClickHandler, /*DoubleClickHandler,*/
-        AnalysisResetHandler, ExpressionColumnChangedHandler,
+        AnalysisResetHandler, ExpressionColumnChangedHandler, OverlayTypeChangedHandler,
         ControlActionHandler, ProfileChangedHandler,
         SuggestionSelectedHandler, SuggestionHoveredHandler,
         IllustrationSelectedHandler, CanvasExportRequestedHandler,
@@ -95,7 +93,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         } catch (FireworksCanvas.CanvasNotSupportedException e) {
             initWidget(new Label("Canvas not supported"));
             fireEvent(new CanvasNotSupportedEvent());
-        } catch (ModelException e) {
+        } catch (RuntimeException e) {
             initWidget(new Label(e.getMessage()));
             e.printStackTrace();
         }
@@ -302,6 +300,11 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     @Override
     public void onIllustrationSelected(IllustrationSelectedEvent event) {
         this.canvases.setIllustration(event.getUrl());
+    }
+
+    @Override
+    public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
+        doUpdate(true);
     }
 
     @Override
@@ -614,12 +617,12 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @SuppressWarnings("SameParameterValue")
     private void doUpdate(boolean force){
-        if(this.forceFireworksDraw){
+        if(force || this.forceFireworksDraw){
             this.forceFireworksDraw = false;
             this.drawFireworks();
             return;
         }
-        if(force || !mouseCurrent.equals(mousePrevious)){
+        if(!mouseCurrent.equals(mousePrevious)){
             Node node = this.manager.getHoveredNode(mouseCurrent);
             if(node==null){
                 if(this.hovered!=null){
@@ -701,6 +704,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
         this.eventBus.addHandler(CanvasExportRequestedEvent.TYPE, this);
+        this.eventBus.addHandler(OverlayTypeChangedEvent.TYPE, this);
 
         this.eventBus.addHandler(SuggestionSelectedEvent.TYPE, this);
         this.eventBus.addHandler(SuggestionHoveredEvent.TYPE, this);

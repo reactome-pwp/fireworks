@@ -11,6 +11,7 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import org.reactome.web.fireworks.events.*;
 import org.reactome.web.fireworks.handlers.*;
+import org.reactome.web.fireworks.legends.EnrichmentLegend;
 import org.reactome.web.fireworks.model.AnalysisInfo;
 import org.reactome.web.fireworks.model.Edge;
 import org.reactome.web.fireworks.model.Graph;
@@ -24,7 +25,7 @@ import java.util.Set;
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
 class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler,
-        AnalysisPerformedHandler, AnalysisResetHandler, ExpressionColumnChangedHandler, ProfileChangedHandler,
+        AnalysisPerformedHandler, AnalysisResetHandler, ExpressionColumnChangedHandler, ProfileChangedHandler, OverlayTypeChangedHandler,
         SearchFilterHandler {
 
     private static final int HEIGHT = 75;
@@ -145,6 +146,11 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
     }
 
     @Override
+    public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
+        Scheduler.get().scheduleDeferred(this::drawThumbnail);
+    }
+
+    @Override
     public void onSearchFilterEvent(SearchFilterEvent event) {
         Scheduler.get().scheduleDeferred(this::drawThumbnail);
     }
@@ -208,6 +214,7 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
         this.eventBus.addHandler(ExpressionColumnChangedEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
         this.eventBus.addHandler(SearchFilterEvent.TYPE, this);
+        this.eventBus.addHandler(OverlayTypeChangedEvent.TYPE, this);
     }
 
     private void drawThumbnail(){
@@ -215,13 +222,14 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
 
         int column = this.analysisInfo.getColumn();
         Context2d ctx = this.thumbnail.getContext2d();
-        String color = FireworksColours.PROFILE.getThumbnailInitialColour();
-        ctx.setStrokeStyle(color);
+        String edgeColour = FireworksColours.PROFILE.getThumbnailInitialColour();
+        ctx.setStrokeStyle(edgeColour);
         for (Edge edge : this.graph.getEdges()) {
             switch (this.analysisInfo.getType()) {
                 case SPECIES_COMPARISON:
                 case OVERREPRESENTATION:
-                    ctx.setStrokeStyle(edge.getColour());
+                    edgeColour = EnrichmentLegend.COVERAGE ? edge.getCoverageColour() : edge.getEnrichmentColour();
+                    ctx.setStrokeStyle(edgeColour);
                     edge.drawThumbnail(ctx, this.factor);
                     break;
                 case EXPRESSION:

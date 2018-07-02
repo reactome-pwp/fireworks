@@ -13,7 +13,7 @@ import java.util.List;
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
 public class AnalysisPerformedEvent extends GwtEvent<AnalysisPerformedHandler> {
-    public static Type<AnalysisPerformedHandler> TYPE = new Type<AnalysisPerformedHandler>();
+    public static Type<AnalysisPerformedHandler> TYPE = new Type<>();
 
     private SpeciesFilteredResult result;
 
