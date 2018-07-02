@@ -170,7 +170,7 @@ public class DetailsInfoPanel extends AbstractAccordionPanel implements ResultSe
         if(selectedResultItem.getSchemaClass() == SchemaClass.PATHWAY || selectedResultItem.getSchemaClass() == SchemaClass.TOP_LEVEL_PATHWAY) {
             if(isItemInList(selectedResultItem.getStId(), result)) {
                 hideSpinner();
-                includeResultWidget(new PathwayPanel("hi", result.iterator().next(), eventBus));
+                includeResultWidget(new PathwayPanel(result.iterator().next(), eventBus));
             } else {
                 String title = "Part of " + result.size() + (result.size() > 1 ? " pathways" : " pathway");
                 includeResultWidget(new DatabaseObjectListPanel(title, result, eventBus));
