@@ -33,6 +33,7 @@ import org.reactome.web.fireworks.search.handlers.SuggestionSelectedHandler;
 import org.reactome.web.fireworks.util.Coordinate;
 import org.reactome.web.fireworks.util.FireworksEventBus;
 import org.reactome.web.fireworks.util.flag.Flagger;
+import org.reactome.web.pwp.model.client.classes.DatabaseObject;
 
 import java.util.HashSet;
 import java.util.List;
