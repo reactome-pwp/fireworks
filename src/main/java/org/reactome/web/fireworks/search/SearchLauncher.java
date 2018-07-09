@@ -363,6 +363,9 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
 
         @Source("images/you_are_here.png")
         ImageResource youAreHere();
+
+        @Source("images/Interactor.png")
+        ImageResource interactor();
     }
 
     /**
