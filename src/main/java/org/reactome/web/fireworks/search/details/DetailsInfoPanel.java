@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.reactome.web.fireworks.events.SearchItemSelectedEvent;
 import org.reactome.web.fireworks.events.SearchFilterEvent;
+import org.reactome.web.fireworks.events.SearchItemSelectedEvent;
 import org.reactome.web.fireworks.search.SearchArguments;
 import org.reactome.web.fireworks.search.events.*;
 import org.reactome.web.fireworks.search.handlers.AutoCompleteRequestedHandler;
@@ -21,7 +21,6 @@ import org.reactome.web.fireworks.search.infopanel.DatabaseObjectListPanel;
 import org.reactome.web.fireworks.search.infopanel.PathwayPanel;
 import org.reactome.web.fireworks.search.panels.AbstractAccordionPanel;
 import org.reactome.web.fireworks.search.results.ResultItem;
-import org.reactome.web.fireworks.util.Console;
 import org.reactome.web.pwp.model.client.classes.Pathway;
 import org.reactome.web.pwp.model.client.common.ContentClientHandler;
 import org.reactome.web.pwp.model.client.content.ContentClient;
@@ -31,7 +30,6 @@ import org.reactome.web.pwp.model.client.util.Ancestors;
 import org.reactome.web.pwp.model.client.util.Path;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 import static org.reactome.web.fireworks.search.events.ResultSelectedEvent.ResultType.GLOBAL;
 
