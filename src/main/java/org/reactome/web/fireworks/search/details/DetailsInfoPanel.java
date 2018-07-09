@@ -20,6 +20,7 @@ import org.reactome.web.fireworks.search.handlers.SearchPerformedHandler;
 import org.reactome.web.fireworks.search.infopanel.DatabaseObjectListPanel;
 import org.reactome.web.fireworks.search.infopanel.PathwayPanel;
 import org.reactome.web.fireworks.search.panels.AbstractAccordionPanel;
+import org.reactome.web.fireworks.search.results.data.InteractorOccurencesFactory;
 import org.reactome.web.fireworks.search.results.ResultItem;
 import org.reactome.web.pwp.model.client.classes.Pathway;
 import org.reactome.web.pwp.model.client.common.ContentClientHandler;
@@ -90,36 +91,55 @@ public class DetailsInfoPanel extends AbstractAccordionPanel implements ResultSe
             show(false);
         } else if (GLOBAL == event.getResultType()) {
             ResultItem item = selectedResultItem;
-            ContentClient.getAncestors(item.getIdentifier(), new AncestorsLoaded() {
-                @Override
-                public void onAncestorsLoaded(Ancestors ancestors) {
-                    Set<Pathway> pathways = new HashSet<>();
-                    for (Path ancestor : ancestors) {
-                        pathways.add(ancestor.getLastPathwayWithDiagram()); //We do not include subpathways in the list
+
+            if(item.getExactType().equalsIgnoreCase("interactor")) {
+                InteractorOccurencesFactory.query(selectedResultItem.getIdentifier(), args.getSpecies(), new InteractorOccurencesFactory.Handler() {
+                    @Override
+                    public void onInteractorOccurencesReceived(List<Pathway> pathways) {
+                        clearResults();
+                        if (!pathways.isEmpty()) {
+                            displayResults(pathways);
+                        }
                     }
 
-                    clearResults();
-                    if (!pathways.isEmpty()) {
-                        displayResults(pathways);
+                    @Override
+                    public void onInteractorOccurencesError(String msg) {
+                        show(false);
+                        includeResultWidget(new Label("An error has occurred. ERROR: " + msg));
                     }
-                }
+                });
+            } else {
+                ContentClient.getAncestors(item.getIdentifier(), new AncestorsLoaded() {
+                    @Override
+                    public void onAncestorsLoaded(Ancestors ancestors) {
+                        Set<Pathway> pathways = new HashSet<>();
+                        for (Path ancestor : ancestors) {
+                            pathways.add(ancestor.getLastPathwayWithDiagram()); //We do not include subpathways in the list
+                        }
 
-                @Override
-                public void onContentClientException(Type type, String message) {
-                    getPathways();
-                }
+                        clearResults();
+                        if (!pathways.isEmpty()) {
+                            displayResults(pathways);
+                        }
+                    }
 
-                @Override
-                public void onContentClientError(ContentClientError error) {
-                    getPathways();
-                }
+                    @Override
+                    public void onContentClientException(Type type, String message) {
+                        getPathways();
+                    }
 
-                private void getPathways() {
-                    ContentClient.getPathwaysWithDiagramForEntity(item.getIdentifier(), false, args.getSpecies(), DetailsInfoPanel.this);
-                }
-            });
+                    @Override
+                    public void onContentClientError(ContentClientError error) {
+                        getPathways();
+                    }
 
-            show(true);
+                    private void getPathways() {
+                        ContentClient.getPathwaysWithDiagramForEntity(item.getIdentifier(), false, args.getSpecies(), DetailsInfoPanel.this);
+                    }
+                });
+
+                show(true);
+            }
         }
     }
 
