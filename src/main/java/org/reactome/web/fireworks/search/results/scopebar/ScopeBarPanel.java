@@ -7,6 +7,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlowPanel;
+import org.reactome.web.fireworks.util.Console;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -52,10 +53,17 @@ public class ScopeBarPanel extends FlowPanel implements ClickHandler {
         handler.onScopeChanged(btns.indexOf(button));
     }
 
-    public void setResultsNumber(int buttonIndex, int number) {
+    public void setTotalResultsNumber(int buttonIndex, int number) {
         ScopeButton btn = btns.get(buttonIndex);
         if (btn != null) {
-            btn.setNumber(number);
+            btn.setTotal(number);
+        }
+    }
+
+    public void setCurrentResultsNumber(int buttonIndex, int number) {
+        ScopeButton btn = btns.get(buttonIndex);
+        if (btn != null) {
+            btn.setCurrent(number);
         }
     }
 

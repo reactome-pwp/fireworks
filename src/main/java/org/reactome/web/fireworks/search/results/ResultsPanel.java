@@ -32,8 +32,7 @@ import org.reactome.web.fireworks.search.results.global.GlobalSearchResultsWidge
 import org.reactome.web.fireworks.search.results.scopebar.ScopeBarPanel;
 import org.reactome.web.fireworks.util.Console;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
@@ -51,6 +50,8 @@ public class ResultsPanel extends AbstractAccordionPanel implements ScopeBarPane
     private SearchSummary summary;
     private SearchArguments searchArguments;
     private SearchArguments previousSearchArguments;
+
+    private Map<Integer, Set<String>> selectedFacetsMap = new HashMap<>();
 
     /**
      * The key provider that provides the unique ID of a SearchResult.
@@ -126,9 +127,11 @@ public class ResultsPanel extends AbstractAccordionPanel implements ScopeBarPane
 
     @Override
     public void onSearchPerformed(SearchPerformedEvent event) {
-        boolean clearSelection = previousSearchArguments!=null && !previousSearchArguments.getQuery().equals(event.getSearchArguments().getQuery());
-
         searchArguments = event.getSearchArguments();
+        //Store the selected facets
+        selectedFacetsMap.put(searchArguments.getFacetsScope(), searchArguments.getFacets());
+
+        boolean clearSelection = previousSearchArguments!=null && !previousSearchArguments.getQuery().equals(event.getSearchArguments().getQuery());
         if(searchArguments.hasValidQuery()) {
             // Get facets and numbers from content service before performing the search query
             SearchSummaryFactory.queryForSummary(searchArguments, this);
@@ -182,11 +185,25 @@ public class ResultsPanel extends AbstractAccordionPanel implements ScopeBarPane
         List<FacetContainer> globalFacets = null;
         if(summary!=null) {
             SearchResult globalResults = summary.getFireworksResult();
-            if (globalResults!=null) {
+            if (globalResults != null) {
                 globalFacets = globalResults.getFacets()!=null ? globalResults.getFacets() : new ArrayList<>();
             }
         }
         resultsWidgets.get(GLOBAL_SEARCH).setFacets(globalFacets);
+
+        updateCurrentScopeNumbers(GLOBAL_SEARCH, globalFacets);
+    }
+
+    private void updateCurrentScopeNumbers(int buttonIndex, List<FacetContainer> facets) {
+        int current = 0;
+        if (facets!=null) {
+            Set<String> selectedFacets = selectedFacetsMap.getOrDefault(buttonIndex, new HashSet<>());
+            current = facets.stream()
+                    .filter(facetContainer -> selectedFacets.contains(facetContainer.getName()))
+                    .mapToInt(FacetContainer::getCount)
+                    .sum();
+        }
+        scopeBar.setCurrentResultsNumber(buttonIndex, current);
     }
 
     private void updateScopeNumbers(SearchSummary summary) {
@@ -197,7 +214,7 @@ public class ResultsPanel extends AbstractAccordionPanel implements ScopeBarPane
                 globalResultsFound = globalResults.getFound();
             }
         }
-        scopeBar.setResultsNumber(GLOBAL_SEARCH, globalResultsFound);
+        scopeBar.setTotalResultsNumber(GLOBAL_SEARCH, globalResultsFound);
     }
 
     private void show(boolean visible) {
