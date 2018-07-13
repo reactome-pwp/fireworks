@@ -69,7 +69,7 @@ public class TitlePanel extends FlowPanel implements ClickHandler,
             eventBus.fireEventFromSource(new NodeFlaggedResetEvent(), this);
         } else {
             if (selectedItem instanceof ResultItem) {
-                eventBus.fireEventFromSource(new NodeFlagRequestedEvent(((ResultItem) selectedItem).getStId()), this);
+                eventBus.fireEventFromSource(new NodeFlagRequestedEvent(((ResultItem) selectedItem).getIdentifier()), this);
             }
         }
     }
