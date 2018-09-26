@@ -136,6 +136,11 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
+    public HandlerRegistration addNodeFlaggedHandler(NodeFlaggedHandler handler) {
+        return this.eventBus.addHandler(NodeFlaggedEvent.TYPE, handler);
+    }
+
+    @Override
     public HandlerRegistration addNodeFlaggedResetHandler(NodeFlaggedResetHandler handler){
         return this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, handler);
     }

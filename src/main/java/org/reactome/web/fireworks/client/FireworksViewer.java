@@ -25,6 +25,8 @@ public interface FireworksViewer extends IsWidget, HasHandlers, RequiresResize {
 
     HandlerRegistration addNodeHoverResetHandler(NodeHoverResetHandler handler);
 
+    HandlerRegistration addNodeFlaggedHandler(NodeFlaggedHandler handler);
+
     HandlerRegistration addNodeFlaggedResetHandler(NodeFlaggedResetHandler handler);
 
     HandlerRegistration addNodeOpenedHandler(NodeOpenedHandler handler);
