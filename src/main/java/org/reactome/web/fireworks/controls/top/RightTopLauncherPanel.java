@@ -7,12 +7,12 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import org.reactome.web.fireworks.controls.common.ExpandibleContainer;
+import org.reactome.web.fireworks.controls.common.IconButton;
 import org.reactome.web.fireworks.controls.top.illustrations.Illustrations;
 import org.reactome.web.fireworks.controls.top.key.PathwayOverviewKey;
 import org.reactome.web.fireworks.events.CanvasExportRequestedEvent;
-import org.reactome.web.fireworks.legends.ControlButton;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -24,11 +24,9 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
     private Illustrations diagramIllustrations;
     private PathwayOverviewKey pathwayOverviewKey;
 
-    private ControlButton illustrationsBtn;
-    private ControlButton captureBtn;
-    private ControlButton pathwayOverviewKeyBtn;
-
-    private ExpandibleContainer expContainer;
+    private Button illustrationsBtn;
+    private Button exportBtn;
+    private Button pathwayOverviewKeyBtn;
 
     public RightTopLauncherPanel(EventBus eventBus) {
         this.setStyleName(RESOURCES.getCSS().launcherPanel());
@@ -37,16 +35,13 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
         this.diagramIllustrations = new Illustrations(eventBus);
         this.pathwayOverviewKey = new PathwayOverviewKey(eventBus);
 
-        this.illustrationsBtn = new ControlButton("Show illustrations", RESOURCES.getCSS().illustrations(), this);
+        this.illustrationsBtn = new IconButton(RESOURCES.illustrationsIcon(), RESOURCES.getCSS().illustrations(), "Show illustrations", this);
         this.add(illustrationsBtn);
 
-        this.captureBtn = new ControlButton("Export", RESOURCES.getCSS().camera(), this);
+        this.exportBtn = new IconButton(RESOURCES.exportIcon(), RESOURCES.getCSS().export(), "Export", this);
+        this.add(exportBtn);
 
-        expContainer = new ExpandibleContainer("Select one export option", RESOURCES.getCSS().export());
-        expContainer.addButton(captureBtn);
-        add(expContainer);
-
-        this.pathwayOverviewKeyBtn = new ControlButton("Pathway overview key", RESOURCES.getCSS().key(), this);
+        this.pathwayOverviewKeyBtn = new IconButton(RESOURCES.keyIcon(), RESOURCES.getCSS().key(), "Pathway overview key", this);
         this.add(this.pathwayOverviewKeyBtn);
 
         this.setVisible(true);
@@ -54,8 +49,8 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
-        ControlButton btn = (ControlButton) event.getSource();
-        if (btn.equals(this.captureBtn)) {
+        Button btn = (Button) event.getSource();
+        if (btn.equals(this.exportBtn)) {
             this.eventBus.fireEventFromSource(new CanvasExportRequestedEvent(), this);
         } else if (btn.equals(this.pathwayOverviewKeyBtn)) {
             if (this.pathwayOverviewKey.isShowing()) {
@@ -83,48 +78,15 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
         @Source(ResourceCSS.CSS)
         ResourceCSS getCSS();
 
+        @Source("images/illustrations.png")
+        ImageResource illustrationsIcon();
 
-        @Source("images/camera_clicked.png")
-        ImageResource cameraClicked();
+        @Source("images/key.png")
+        ImageResource keyIcon();
 
-        @Source("images/camera_disabled.png")
-        ImageResource cameraDisabled();
+        @Source("images/export.png")
+        ImageResource exportIcon();
 
-        @Source("images/camera_hovered.png")
-        ImageResource cameraHovered();
-
-        @Source("images/camera_normal.png")
-        ImageResource cameraNormal();
-
-        @Source("images/export_hovered.png")
-        ImageResource exportHovered();
-
-        @Source("images/export_normal.png")
-        ImageResource exportNormal();
-
-        @Source("images/illustrations_clicked.png")
-        ImageResource illustrationsClicked();
-
-        @Source("images/illustrations_disabled.png")
-        ImageResource illustrationsDisabled();
-
-        @Source("images/illustrations_hovered.png")
-        ImageResource illustrationsHovered();
-
-        @Source("images/illustrations_normal.png")
-        ImageResource illustrationsNormal();
-
-        @Source("images/key_clicked.png")
-        ImageResource keyClicked();
-
-        @Source("images/key_disabled.png")
-        ImageResource keyDisabled();
-
-        @Source("images/key_hovered.png")
-        ImageResource keyHovered();
-
-        @Source("images/key_normal.png")
-        ImageResource keyNormal();
     }
 
     @CssResource.ImportedWithPrefix("fireworks-LeftTopLauncher")
@@ -132,8 +94,6 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
         String CSS = "org/reactome/web/fireworks/controls/top/RightTopLauncherPanel.css";
 
         String launcherPanel();
-
-        String camera();
 
         String export();
 

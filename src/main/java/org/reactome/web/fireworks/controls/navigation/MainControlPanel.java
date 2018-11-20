@@ -7,9 +7,10 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import org.reactome.web.fireworks.client.FireworksFactory;
-import org.reactome.web.fireworks.controls.common.PwpButton;
+import org.reactome.web.fireworks.controls.common.IconButton;
 import org.reactome.web.fireworks.events.ControlActionEvent;
 import org.reactome.web.fireworks.events.NodeSelectedEvent;
 import org.reactome.web.fireworks.events.NodeSelectedResetEvent;
@@ -22,18 +23,19 @@ import org.reactome.web.fireworks.handlers.NodeSelectedResetHandler;
 public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSelectedHandler, NodeSelectedResetHandler {
 
     private EventBus eventBus;
-    private PwpButton fitAll;
-    private PwpButton open;
+    private Button fitAll;
+    private Button open;
 
     public MainControlPanel(EventBus eventBus) {
         this.eventBus = eventBus;
 
         this.addStyleName(RESOURCES.getCSS().mainControlPanel());
-        this.fitAll = new PwpButton("Show all", RESOURCES.getCSS().fitall(), this);
+
+        this.fitAll = new IconButton(RESOURCES.fitallIcon(), RESOURCES.getCSS().fitall(), "Show all", this);
         this.add(this.fitAll);
 
         if (FireworksFactory.SHOW_DIAGRAM_BTN) {
-            this.open = new PwpButton("Open pathway diagram", RESOURCES.getCSS().diagram(), this);
+            this.open = new IconButton(RESOURCES.diagramIcon(), RESOURCES.getCSS().diagram(), "Open pathway diagram", this);
             this.open.setEnabled(false);
             this.add(this.open);
         }
@@ -44,7 +46,7 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
 
     @Override
     public void onClick(ClickEvent event) {
-        PwpButton btn = (PwpButton) event.getSource();
+        Button btn = (Button) event.getSource();
         if (btn.equals(this.fitAll)) {
             this.eventBus.fireEventFromSource(new ControlActionEvent(ControlAction.FIT_ALL), this);
         } else if (btn.equals(this.open)) {
@@ -83,29 +85,11 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
         @Source(ResourceCSS.CSS)
         ResourceCSS getCSS();
 
-        @Source("images/fitall_clicked.png")
-        ImageResource fitallClicked();
+        @Source("images/fitall.png")
+        ImageResource fitallIcon();
 
-        @Source("images/fitall_disabled.png")
-        ImageResource fitallDisabled();
-
-        @Source("images/fitall_hovered.png")
-        ImageResource fitallHovered();
-
-        @Source("images/fitall_normal.png")
-        ImageResource fitallNormal();
-
-        @Source("images/diagram_clicked.png")
-        ImageResource diagramClicked();
-
-        @Source("images/diagram_disabled.png")
-        ImageResource diagramDisabled();
-
-        @Source("images/diagram_hovered.png")
-        ImageResource diagramHovered();
-
-        @Source("images/diagram_normal.png")
-        ImageResource diagramNormal();
+        @Source("images/diagram.png")
+        ImageResource diagramIcon();
     }
 
     /**

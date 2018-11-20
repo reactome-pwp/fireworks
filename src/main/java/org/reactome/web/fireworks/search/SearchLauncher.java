@@ -43,11 +43,10 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
     private static int SEARCH_QUERY_MINIMUM_LENGTH = 2;
 
     private EventBus eventBus;
-//    private Context context;
     private Graph graph;
 
-    private SearchBox input = null;
-    private PwpButton searchBtn = null;
+    private SearchBox input;
+    private IconButton searchBtn;
     private IconButton clearBtn;
     private IconButton executeBtn;
     private IconToggleButton optionsBtn;
@@ -67,7 +66,7 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
         this.eventBus = eventBus;
         this.graph = graph;
 
-        this.searchBtn = new PwpButton("Search Reactome", RESOURCES.getCSS().launch(), this);
+        this.searchBtn = new IconButton(RESOURCES.searchIcon(), RESOURCES.getCSS().launch(), "Search Reactome", this);
         this.add(searchBtn);
 
         this.input = new SearchBox();
@@ -337,17 +336,8 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
         @Source(SearchLauncherCSS.CSS)
         SearchLauncherCSS getCSS();
 
-        @Source("images/search_clicked.png")
-        ImageResource launchClicked();
-
-        @Source("images/search_disabled.png")
-        ImageResource launchDisabled();
-
-        @Source("images/search_hovered.png")
-        ImageResource launchHovered();
-
-        @Source("images/search_normal.png")
-        ImageResource launchNormal();
+        @Source("images/search.png")
+        ImageResource searchIcon();
 
         @Source("images/search_go.png")
         ImageResource searchGo();
