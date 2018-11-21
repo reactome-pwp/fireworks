@@ -82,6 +82,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     private Node selected = null;
     private Set<Node> nodesToFlag = null;
     private Set<Edge> edgesToFlag = null;
+    private String flagTerm;
 
     FireworksViewerImpl(String json) {
         this.eventBus = new FireworksEventBus();
@@ -285,8 +286,9 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
-    public void onDiagramExportRequested(CanvasExportRequestedEvent event) {
-        this.canvases.exportImage(data.getSpeciesId().toString());
+    public void onCanvasExportRequested(CanvasExportRequestedEvent event) {
+        String sel = selected != null ? selected.getStId() : null;
+        this.canvases.showExportDialog(sel, flagTerm, token);
     }
 
     @Override
@@ -332,11 +334,11 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     public void onNodeFlagRequested(NodeFlagRequestedEvent event) {
         if(event.getSource().equals(this)) return;
 
-        String identifier = event.getTerm();
-        if (identifier == null || identifier.isEmpty()) {
+        flagTerm = event.getTerm();
+        if (flagTerm == null || flagTerm.isEmpty()) {
             resetFlaggedItems();
         } else {
-            findPathwaysToFlag(identifier);
+            findPathwaysToFlag(flagTerm);
         }
     }
 
@@ -368,6 +370,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onNodeFlaggedReset() {
+        this.flagTerm = null;
         this.nodesToFlag = null;
         forceFireworksDraw = true;
     }

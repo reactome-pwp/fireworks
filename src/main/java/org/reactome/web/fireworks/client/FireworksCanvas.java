@@ -25,6 +25,7 @@ import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.util.ToolTipContainer;
 import org.reactome.web.fireworks.util.popups.ImageDownloadDialog;
+import org.reactome.web.fireworks.util.popups.export.ExportDialog;
 import uk.ac.ebi.pwp.structures.quadtree.client.QuadTreeBox;
 
 import java.util.HashSet;
@@ -364,7 +365,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         this.cleanCanvas(this.textTLP);
     }
 
-    public void exportImage(final String diagramStId) {
+    public void showExportDialog(final String selected, final String flagTerm, final String analysisToken) {
         final Context2d ctx = this.canvases.get(this.canvases.size() - 1).getContext2d();
         //This is silly but gives some visual feedback of the picture taking :D
         (new Timer() {
@@ -385,15 +386,46 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                     for (int i = 0; i < canvases.size() - 1; i++) {
                         ctx.drawImage(canvases.get(i).getCanvasElement(), 0, 0);
                     }
-                    Image image = new Image();
-                    image.setUrl(ctx.getCanvas().toDataUrl("image/png"));
-                    final ImageDownloadDialog downloadDialogBox = new ImageDownloadDialog(image, diagramStId);
-                    downloadDialogBox.show();
+                    Image snapshot = new Image();
+                    snapshot.setUrl(ctx.getCanvas().toDataUrl("image/png"));
+                    final ExportDialog dialog = new ExportDialog(selected, flagTerm, analysisToken, snapshot);
+                    dialog.showCentered();
                     cleanCanvas(ctx);
                 }
             }
         }).scheduleRepeating(20);
     }
+
+//    public void exportImage(final String diagramStId) {
+//        final Context2d ctx = this.canvases.get(this.canvases.size() - 1).getContext2d();
+//        //This is silly but gives some visual feedback of the picture taking :D
+//        (new Timer() {
+//            double alpha = 1.0;
+//
+//            @Override
+//            public void run() {
+//                cleanCanvas(ctx);
+//                if (alpha > 0) {
+//                    ctx.save();
+//                    ctx.setGlobalAlpha(alpha);
+//                    ctx.setFillStyle("#FFFFFF");
+//                    ctx.fillRect(0, 0, ctx.getCanvas().getWidth(), ctx.getCanvas().getHeight());
+//                    ctx.restore();
+//                    alpha -= 0.1;
+//                } else {
+//                    this.cancel();
+//                    for (int i = 0; i < canvases.size() - 1; i++) {
+//                        ctx.drawImage(canvases.get(i).getCanvasElement(), 0, 0);
+//                    }
+//                    Image image = new Image();
+//                    image.setUrl(ctx.getCanvas().toDataUrl("image/png"));
+//                    final ImageDownloadDialog downloadDialogBox = new ImageDownloadDialog(image, diagramStId);
+//                    downloadDialogBox.show();
+//                    cleanCanvas(ctx);
+//                }
+//            }
+//        }).scheduleRepeating(20);
+//    }
 
     Canvas getTopCanvas() {
         return this.canvases.get(this.canvases.size() - 1);
@@ -432,8 +464,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
     private void flagEdge(Edge edge) {
         Context2d ctx = this.nodesFlagged.getContext2d();
-
-
     }
 
     public void highlightNode(Node node) {

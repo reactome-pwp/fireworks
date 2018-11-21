@@ -16,7 +16,7 @@ public class CanvasExportRequestedEvent extends GwtEvent<CanvasExportRequestedHa
 
     @Override
     protected void dispatch(CanvasExportRequestedHandler handler) {
-        handler.onDiagramExportRequested(this);
+        handler.onCanvasExportRequested(this);
     }
 
     @Override
