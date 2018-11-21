@@ -27,7 +27,7 @@ public class HideableContainerPanel extends FlowPanel implements ClickHandler {
     private Button profilesBtn;
     private Button interactorsBtn;
     private Button aboutBtn;
-    private PwpButton showBtn;
+    private Button showBtn;
 
     private DeckLayoutPanel container;
 
@@ -59,12 +59,7 @@ public class HideableContainerPanel extends FlowPanel implements ClickHandler {
         outerPanel.add(buttonsPanel);
         outerPanel.add(this.container);
 
-        showBtn = new PwpButton("Show/Hide settings", RESOURCES.getCSS().showHide(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-               HideableContainerPanel.this.toggle();
-            }
-        });
+        showBtn = new PwpButton("Show/Hide settings", RESOURCES.getCSS().showHide(), clickEvent -> HideableContainerPanel.this.toggle());
 
         InlineLabel header = new InlineLabel("Settings");
         header.setStyleName(RESOURCES.getCSS().headerLabel());
@@ -147,10 +142,10 @@ public class HideableContainerPanel extends FlowPanel implements ClickHandler {
         @Source("tabs/aboutFireworks.html")
         TextResource aboutThis();
 
-        @Source("images/profiles_s.png")
+        @Source("images/profiles.png")
         ImageResource profilesTabIcon();
 
-        @Source("images/about_s.png")
+        @Source("images/about.png")
         ImageResource aboutTabIcon();
 
         @Source("images/showHide.png")
