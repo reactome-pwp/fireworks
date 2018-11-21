@@ -19,11 +19,12 @@ import org.reactome.web.fireworks.handlers.NodeSelectedResetHandler;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.util.Console;
 import org.reactome.web.pwp.model.client.classes.DatabaseObject;
-import org.reactome.web.pwp.model.client.classes.Figure;
 import org.reactome.web.pwp.model.client.classes.Pathway;
 import org.reactome.web.pwp.model.client.common.ContentClientHandler;
 import org.reactome.web.pwp.model.client.content.ContentClient;
 import org.reactome.web.pwp.model.client.content.ContentClientError;
+
+import java.util.List;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -82,25 +83,28 @@ public class Illustrations extends AbstractMenuDialog implements NodeOpenedHandl
                     if (pathway.getFigure().isEmpty()) {
                         add(getIllustration(pathway, null));
                     } else {
-                        for (Figure figure : pathway.getFigure()) {
-                            figure.load(new ObjectLoaded() {
-                                @Override
-                                public void onObjectLoaded(DatabaseObject databaseObject) {
-                                    Figure figure = (Figure) databaseObject;
-                                    add(getIllustration(pathway, FireworksFactory.ILLUSTRATION_SERVER + figure.getUrl()));
+                        ContentClient.query(databaseObject.getStId(), "figure", new AttributesLoaded() {
+                            @Override
+                            public void onAttributesLoaded(List<String[]> attributes) {
+                                boolean hasEHLD = false;
+                                for (String[] attr : attributes) {
+                                    if(hasEHLD) return;
+                                    String url = attr[1];
+                                    add(getIllustration(pathway, FireworksFactory.ILLUSTRATION_SERVER + url));
+                                    hasEHLD = url.contains("/figures/ehld/");
                                 }
+                            }
 
-                                @Override
-                                public void onContentClientException(Type type, String message) {
-                                    Console.error(message);
-                                }
+                            @Override
+                            public void onContentClientException(Type type, String message) {
+                                Console.error(message);
+                            }
 
-                                @Override
-                                public void onContentClientError(ContentClientError error) {
-                                    Console.error(error.getReason());
-                                }
-                            });
-                        }
+                            @Override
+                            public void onContentClientError(ContentClientError error) {
+                                Console.error(error.getReason());
+                            }
+                        });
                     }
                 }
             }
