@@ -24,7 +24,6 @@ import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.util.ToolTipContainer;
-import org.reactome.web.fireworks.util.popups.ImageDownloadDialog;
 import org.reactome.web.fireworks.util.popups.export.ExportDialog;
 import uk.ac.ebi.pwp.structures.quadtree.client.QuadTreeBox;
 
