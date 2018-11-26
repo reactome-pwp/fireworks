@@ -36,6 +36,7 @@ public class TitlePanel extends FlowPanel implements ClickHandler,
 
     private String termToFlagBy;
     private String flaggedTerm;
+    private Boolean includeInteractors = true;
 
     public TitlePanel(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -69,7 +70,7 @@ public class TitlePanel extends FlowPanel implements ClickHandler,
             eventBus.fireEventFromSource(new NodeFlaggedResetEvent(), this);
         } else {
             if (selectedItem instanceof ResultItem) {
-                eventBus.fireEventFromSource(new NodeFlagRequestedEvent(((ResultItem) selectedItem).getIdentifier()), this);
+                eventBus.fireEventFromSource(new NodeFlagRequestedEvent(((ResultItem) selectedItem).getIdentifier(), this.includeInteractors), this);
             }
         }
     }
@@ -83,6 +84,7 @@ public class TitlePanel extends FlowPanel implements ClickHandler,
     @Override
     public void onNodeFlagged(NodeFlaggedEvent event) {
         this.flaggedTerm = event.getTerm();
+        this.includeInteractors = event.getIncludeInteractors();
         flagBtn.setActive(flaggedTerm!=null && flaggedTerm.equals(termToFlagBy));
     }
 

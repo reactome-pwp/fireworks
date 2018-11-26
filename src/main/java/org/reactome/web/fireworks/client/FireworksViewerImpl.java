@@ -83,6 +83,9 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     private Set<Node> nodesToFlag = null;
     private Set<Edge> edgesToFlag = null;
 
+    private String flagTerm;
+    private Boolean includeInteractors = true;
+
     FireworksViewerImpl(String json) {
         this.eventBus = new FireworksEventBus();
         try {
@@ -172,25 +175,28 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
-    public void flagItems(String identifier) {
+    public void flagItems(String identifier, Boolean includeInteractors) {
+        this.flagTerm = identifier;
+        this.includeInteractors = includeInteractors;
         if (identifier == null || identifier.isEmpty()) {
             resetFlaggedItems();
         } else {
-            eventBus.fireEventFromSource(new NodeFlagRequestedEvent(identifier), this);
+            eventBus.fireEventFromSource(new NodeFlagRequestedEvent(identifier, includeInteractors), this);
 
-            findPathwaysToFlag(identifier);
+            findPathwaysToFlag(identifier, includeInteractors);
         }
     }
 
     @Override
     public void flagNodes(String term, String... stIds) {
-        eventBus.fireEventFromSource(new NodeFlagRequestedEvent(term), this);
+        this.flagTerm = term;
+        eventBus.fireEventFromSource(new NodeFlagRequestedEvent(term, includeInteractors), this);
         Set<Node> toFlag = new HashSet<>();
         for (String stId : stIds) {
             Node node = data.getNode(stId);
             if (node != null) toFlag.add(node);
         }
-        setFlaggedElements(term, toFlag, new HashSet<>());
+        setFlaggedElements(term, includeInteractors, toFlag, new HashSet<>());
     }
 
     @Override
@@ -332,16 +338,17 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     public void onNodeFlagRequested(NodeFlagRequestedEvent event) {
         if(event.getSource().equals(this)) return;
 
-        String identifier = event.getTerm();
-        if (identifier == null || identifier.isEmpty()) {
+        flagTerm = event.getTerm();
+        includeInteractors = event.getIncludeInteractors();
+        if (flagTerm == null || flagTerm.isEmpty()) {
             resetFlaggedItems();
         } else {
-            findPathwaysToFlag(identifier);
+            findPathwaysToFlag(flagTerm, includeInteractors);
         }
     }
 
-    private void findPathwaysToFlag(String identifier) {
-        Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), new Flagger.PathwaysToFlagHandler() {
+    private void findPathwaysToFlag(String identifier, Boolean includeInteractors) {
+        Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), includeInteractors, new Flagger.PathwaysToFlagHandler() {
             @Override
             public void onPathwaysToFlag(List<String> result) {
                 Set<Edge> edgesToFlag = new HashSet<>();
@@ -356,7 +363,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
                 for (Node node : nodesToFlag) {
                     edgesToFlag.addAll(node.getEdgesTo());
                 }
-                setFlaggedElements(identifier, nodesToFlag, edgesToFlag);
+                setFlaggedElements(identifier, includeInteractors, nodesToFlag, edgesToFlag);
             }
 
             @Override
@@ -368,9 +375,16 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onNodeFlaggedReset() {
+        this.flagTerm = null;
         this.nodesToFlag = null;
         forceFireworksDraw = true;
     }
+
+//    @Override
+//    public void onFlagScopeChanged(FlagScopeChangedEvent event) {
+//        this.includeInteractors = event.getIncludeInteractors();
+//        flagItems(flagTerm);
+//    }
 
     @Override
     public void onMouseDown(MouseDownEvent event) {
@@ -614,7 +628,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void resetFlaggedItems() {
-        this.setFlaggedElements(null, null, null);
+        this.setFlaggedElements(null, null, null, null);
     }
 
     private void doUpdate(){
@@ -786,7 +800,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         }
     }
 
-    private void setFlaggedElements(String term, Set<Node> nodesToFlag, Set<Edge> edgesToFlag) {
+    private void setFlaggedElements(String term, Boolean includeInteractors, Set<Node> nodesToFlag, Set<Edge> edgesToFlag) {
         if (nodesToFlag == null || nodesToFlag.isEmpty()) {
             this.nodesToFlag = new HashSet<>();
             this.edgesToFlag = new HashSet<>();
@@ -794,7 +808,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
             this.nodesToFlag = new HashSet<>(nodesToFlag);
             this.edgesToFlag = new HashSet<>(edgesToFlag);
         }
-        this.eventBus.fireEventFromSource(new NodeFlaggedEvent(term, this.nodesToFlag), this);
+        this.eventBus.fireEventFromSource(new NodeFlaggedEvent(term, includeInteractors, this.nodesToFlag), this);
         forceFireworksDraw = true;
     }
 }

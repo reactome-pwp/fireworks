@@ -1,10 +1,13 @@
 package org.reactome.web.fireworks.legends;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.ListBox;
 import org.reactome.web.fireworks.controls.common.PwpButton;
 import org.reactome.web.fireworks.events.NodeFlagRequestedEvent;
 import org.reactome.web.fireworks.events.NodeFlaggedEvent;
@@ -19,12 +22,17 @@ import java.util.Collection;
 /**
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
-public class FlaggedItemsControl extends LegendPanel implements ClickHandler,
+public class FlaggedItemsControl extends LegendPanel implements ClickHandler, ChangeHandler,
         NodeFlaggedHandler, NodeFlaggedResetHandler, NodeFlagRequestedHandler {
 
     private InlineLabel msgLabel;
     private PwpButton closeBtn;
     private Image loadingIcon;
+    private InlineLabel interactorsLabel;
+    private ListBox selector;
+
+    private String flagTerm;
+    private Boolean includeInteractors = true;
 
     public FlaggedItemsControl(final EventBus eventBus) {
         super(eventBus);
@@ -45,6 +53,17 @@ public class FlaggedItemsControl extends LegendPanel implements ClickHandler,
         this.closeBtn = new PwpButton("Close and un-flag pathways", css.close(), this);
         this.add(this.closeBtn);
 
+        this.interactorsLabel = new InlineLabel("Interactors:");
+        this.interactorsLabel.setTitle("Allows interactors to be taken into account during flagging");
+        this.add(this.interactorsLabel);
+
+        this.selector = new ListBox();
+        this.selector.addChangeHandler(this);
+        this.selector.addItem("Include", "true");
+        this.selector.addItem("Exclude", "false");
+        this.add(this.selector);
+
+
         this.initHandlers();
         this.setVisible(false);
     }
@@ -56,26 +75,41 @@ public class FlaggedItemsControl extends LegendPanel implements ClickHandler,
         }
     }
 
+
+    @Override
+    public void onChange(ChangeEvent event) {
+        this.includeInteractors = Boolean.valueOf(this.selector.getSelectedValue());
+        eventBus.fireEventFromSource(new NodeFlagRequestedEvent(this.flagTerm, this.includeInteractors), this);
+    }
+
+
     @Override
     public void onNodeFlagged(NodeFlaggedEvent event) {
-        String term =  event.getTerm();
+        this.flagTerm =  event.getTerm();
         Collection<Node> flaggedItems =  event.getFlagged();
         String msg = " - " + flaggedItems.size() + (flaggedItems.size() == 1 ? " pathway" : " pathways") + " flagged";
-        this.msgLabel.setText(term + msg);
-        loadingIcon.setVisible(false);
+        this.msgLabel.setText(flagTerm + msg);
+        this.loadingIcon.setVisible(false);
+        this.interactorsLabel.setVisible(true);
+        this.selector.setVisible(true);
         this.setVisible(true);
     }
 
     @Override
     public void onNodeFlagRequested(NodeFlagRequestedEvent event) {
-        String term = event.getTerm();
-        loadingIcon.setVisible(true);
-        this.msgLabel.setText("Flagging entities for " + term + "...");
+        this.flagTerm = event.getTerm();
+        this.includeInteractors = event.getIncludeInteractors();
+        this.loadingIcon.setVisible(true);
+        this.msgLabel.setText("Flagging entities for " + flagTerm + "...");
+        this.interactorsLabel.setVisible(false);
+        this.selector.setVisible(false);
+        updateSelectorValue();
         this.setVisible(true);
     }
 
     @Override
     public void onNodeFlaggedReset() {
+        this.flagTerm = null;
         this.setVisible(false);
     }
 
@@ -83,5 +117,9 @@ public class FlaggedItemsControl extends LegendPanel implements ClickHandler,
         this.eventBus.addHandler(NodeFlaggedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlagRequestedEvent.TYPE, this);
+    }
+
+    private void updateSelectorValue() {
+        selector.setSelectedIndex(includeInteractors ? 0 : 1);
     }
 }

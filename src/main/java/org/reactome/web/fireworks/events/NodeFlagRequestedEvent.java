@@ -10,9 +10,11 @@ public class NodeFlagRequestedEvent extends GwtEvent<NodeFlagRequestedHandler> {
     public static final Type<NodeFlagRequestedHandler> TYPE = new Type<>();
 
     String term;
+    Boolean includeInteractors;
 
-    public NodeFlagRequestedEvent(String term) {
+    public NodeFlagRequestedEvent(String term, Boolean includeInteractors) {
         this.term = term;
+        this.includeInteractors = includeInteractors;
     }
 
     @Override
@@ -29,10 +31,15 @@ public class NodeFlagRequestedEvent extends GwtEvent<NodeFlagRequestedHandler> {
         return term;
     }
 
+    public Boolean getIncludeInteractors() {
+        return includeInteractors;
+    }
+
     @Override
     public String toString() {
         return "NodeFlagRequestedEvent{" +
                 "term='" + term + '\'' +
+                ", includeInteractors=" + includeInteractors +
                 '}';
     }
 }

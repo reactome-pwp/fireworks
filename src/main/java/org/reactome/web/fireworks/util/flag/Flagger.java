@@ -14,9 +14,7 @@ import java.util.List;
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
 public class Flagger {
-
-//    private static final String SEARCH = "/ContentService/data/pathways/low/diagram/identifier/##term##/allForms?speciesId=##species##";
-    private static final String SEARCH = "/ContentService/search/fireworks/flag?query=##term##&species=##species##";
+    private static final String SEARCH = "/ContentService/search/fireworks/flag?query=##term##&species=##species##&includeInteractors=##includeInteractors##";
     private static Request request;
 
     public interface PathwaysToFlagHandler {
@@ -24,8 +22,10 @@ public class Flagger {
         void onPathwaysToFlagError();
     }
 
-    public static void findPathwaysToFlag(String term, String species, final PathwaysToFlagHandler handler) {
-        String url = FireworksFactory.SERVER + SEARCH.replace("##term##", term).replace("##species##", species);
+    public static void findPathwaysToFlag(final String term, final String species, final Boolean includeInteractors, final PathwaysToFlagHandler handler) {
+        String url = FireworksFactory.SERVER + SEARCH.replace("##term##", term)
+                                                     .replace("##species##", species)
+                                                     .replace("##includeInteractors##", includeInteractors.toString());
 
         if (request != null && request.isPending()) request.cancel();
 

@@ -39,7 +39,7 @@ public interface FireworksViewer extends IsWidget, HasHandlers, RequiresResize {
 
     Node getSelected();
 
-    void flagItems(String identifier);
+    void flagItems(String identifier, Boolean includeInteractors);
 
     void flagNodes(String term, String... stIds);
 
