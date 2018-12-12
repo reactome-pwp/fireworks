@@ -13,11 +13,13 @@ public class NodeFlaggedEvent extends GwtEvent<NodeFlaggedHandler> {
     public static final Type<NodeFlaggedHandler> TYPE = new Type<>();
 
     String term;
+    Boolean includeInteractors;
     Collection<Node> flagged;
 
-    public NodeFlaggedEvent(String term, Collection<Node> flagged) {
+    public NodeFlaggedEvent(String term, Boolean includeInteractors, Collection<Node> flagged) {
         this.term = term;
         this.flagged = flagged;
+        this.includeInteractors = includeInteractors;
     }
 
     @Override
@@ -33,6 +35,10 @@ public class NodeFlaggedEvent extends GwtEvent<NodeFlaggedHandler> {
         return term;
     }
 
+    public Boolean getIncludeInteractors() {
+        return includeInteractors;
+    }
+
     @Override
     protected void dispatch(NodeFlaggedHandler event) {
         event.onNodeFlagged(this);
@@ -41,7 +47,9 @@ public class NodeFlaggedEvent extends GwtEvent<NodeFlaggedHandler> {
     @Override
     public String toString() {
         return "NodeFlaggedEvent{" +
-                "flagged=" + flagged.size() +
+                "term='" + term + '\'' +
+                ", includeInteractors=" + includeInteractors +
+                ", flagged=" + (flagged != null ? flagged.size() : 0) +
                 '}';
     }
 }
