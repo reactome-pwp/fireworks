@@ -351,20 +351,25 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     private void findPathwaysToFlag(String identifier, Boolean includeInteractors) {
         Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), includeInteractors, new Flagger.PathwaysToFlagHandler() {
             @Override
-            public void onPathwaysToFlag(List<String> result) {
-                Set<Edge> edgesToFlag = new HashSet<>();
+            public void onPathwaysToFlag(List<String> llps, List<String> interactsWith) {
                 Set<Node> nodesToFlag = new HashSet<>();
-                for (String pathway : result) {
+                add(llps, nodesToFlag);
+                if(includeInteractors) add(interactsWith, nodesToFlag);
+
+                Set<Edge> edgesToFlag = new HashSet<>();
+                nodesToFlag.forEach(n -> edgesToFlag.addAll(n.getEdgesTo()));
+
+                setFlaggedElements(identifier, includeInteractors, nodesToFlag, edgesToFlag);
+            }
+
+            private void add(List<String> list, Set<Node> nodesToFlag){
+                for (String pathway : list) {
                     Node node = data.getNode(pathway);
                     if (node != null){
                         nodesToFlag.add(node);
                         nodesToFlag.addAll(node.getAncestors());
                     }
                 }
-                for (Node node : nodesToFlag) {
-                    edgesToFlag.addAll(node.getEdgesTo());
-                }
-                setFlaggedElements(identifier, includeInteractors, nodesToFlag, edgesToFlag);
             }
 
             @Override
