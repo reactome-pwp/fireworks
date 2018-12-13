@@ -4,11 +4,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import org.reactome.web.fireworks.util.Console;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,9 +80,7 @@ public class ImageTabPanel extends FlowPanel {
         });
 
         String previewUrl = generateUrlList(ImageDownloadType.SVG).get(0) + "&title=false";
-        preview.setUrl(UriUtils.encode(previewUrl));
-        Console.info(UriUtils.isSafeUri(previewUrl));
-//        preview.setUrl(previewUrl);
+        preview.setUrl(previewUrl);
     }
 
 
@@ -96,7 +92,7 @@ public class ImageTabPanel extends FlowPanel {
             List<String> urls = generateUrlList(format);
             // Add all buttons with one exception;
             // SBGN should only be added if a node is selected.
-            DownloadButton<ImageDownloadType> button =  new DownloadButton<>(format, urls.stream().map(u -> UriUtils.encode(u)).collect(Collectors.toList()));
+            DownloadButton<ImageDownloadType> button =  new DownloadButton<>(format, urls);
             if(format != ImageDownloadType.SBGN) {
                 rtn.add(button);
             } else {
@@ -112,7 +108,7 @@ public class ImageTabPanel extends FlowPanel {
     public List<String> generateUrlList(ImageDownloadType type) {
         List<String> rtn = new ArrayList<>();
 
-        String baseUrl = type.getTemplateURL().replace("__SPECIES__", UriUtils.encode(speciesName));
+        String baseUrl = type.getTemplateURL().replace("__SPECIES__", speciesName);
 
         if(selected!=null && !selected.isEmpty()) {
             baseUrl = baseUrl.replace("__STID__", selected);
