@@ -292,8 +292,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onCanvasExportRequested(CanvasExportRequestedEvent event) {
-        String sel = selected != null ? selected.getStId() : null;
-        this.canvases.showExportDialog(sel, flagTerm, token);
+        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, resource);
     }
 
     @Override
@@ -629,6 +628,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     @Override
     public void resetFlaggedItems() {
         this.setFlaggedElements(null, null, null, null);
+
     }
 
     private void doUpdate(){
@@ -804,11 +804,12 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         if (nodesToFlag == null || nodesToFlag.isEmpty()) {
             this.nodesToFlag = new HashSet<>();
             this.edgesToFlag = new HashSet<>();
+            this.eventBus.fireEventFromSource(new NodeFlaggedResetEvent(), this);
         } else {
             this.nodesToFlag = new HashSet<>(nodesToFlag);
             this.edgesToFlag = new HashSet<>(edgesToFlag);
+            this.eventBus.fireEventFromSource(new NodeFlaggedEvent(term, includeInteractors, this.nodesToFlag), this);
         }
-        this.eventBus.fireEventFromSource(new NodeFlaggedEvent(term, includeInteractors, this.nodesToFlag), this);
         forceFireworksDraw = true;
     }
 }

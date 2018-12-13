@@ -27,17 +27,16 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
     private List<Button> btns = new LinkedList<>();
     private DeckLayoutPanel tabContainer;
 
-//    private final String diagramStId;
-//    private final Long diagramId;
+    private final String speciesName;
     private final String selected;
+    private final Long selectedDbId;
     private final String flagged;
+    private final Boolean includeInteractors;
     private final String analysisToken;
+    private final String resource;
     private final Image snapshot;
-//    private final AnalysisStatus status;
 
-//    private final Content.Type contentType;
-
-    public ExportDialog(final String selected, final String flagged, final String analysisToken, final Image snapshot){
+    public ExportDialog(final String speciesName, final String selected, final Long selectedDbId, final String flagged, final Boolean includeInteractors, final String analysisToken, final String resource, final Image snapshot){
         super();
         this.setAutoHideEnabled(true);
         this.setModal(true);
@@ -46,9 +45,13 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
         this.setAutoHideOnHistoryEventsEnabled(true);
 
         this.snapshot = snapshot;
+        this.speciesName = speciesName;
         this.selected = selected;
+        this.selectedDbId = selectedDbId;
         this.flagged = flagged;
+        this.includeInteractors = includeInteractors;
         this.analysisToken = analysisToken;
+        this.resource = resource;
 
         // Initialise the dialog
         initUI();
@@ -125,15 +128,14 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
         tabButtonsPanel.add(this.contentExportBtn = getTabButton("Export content", "Export the content of the selected pathway",RESOURCES.contentIcon()));
         this.snapshotBtn.addStyleName(RESOURCES.getCSS().tabButtonSelected());
 
-        this.imageExportBtn.setEnabled(false);
-        this.contentExportBtn.setEnabled(false);
+        this.contentExportBtn.setEnabled(selected!=null && !selected.isEmpty());
 
         this.tabContainer = new DeckLayoutPanel();                 // Main tab container
         this.tabContainer.setStyleName(RESOURCES.getCSS().tabContainer());
 
         this.tabContainer.add(new SnapshotTabPanel(snapshot));
-        this.tabContainer.add(new ImageTabPanel(selected, flagged, analysisToken, FireworksColours.getSelectedProfileName()));
-//        this.tabContainer.add(new ContentTabPanel(diagramStId, diagramId));
+        this.tabContainer.add(new ImageTabPanel(speciesName, selected, flagged, includeInteractors, analysisToken, resource, FireworksColours.getSelectedProfileName()));
+        this.tabContainer.add(new ContentTabPanel(selected, selectedDbId));
 
         this.tabContainer.showWidget(0);
         this.tabContainer.setAnimationVertical(true);

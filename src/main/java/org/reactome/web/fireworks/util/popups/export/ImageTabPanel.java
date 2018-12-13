@@ -4,9 +4,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import org.reactome.web.fireworks.util.Console;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,12 @@ import java.util.stream.Collectors;
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 public class ImageTabPanel extends FlowPanel {
+    private final String speciesName;
     private final String selected;
     private final String flagged;
+    private final Boolean includeInteractors;
     private final String analysisToken;
+    private final String resource;
     private final String fireworksProfile;
 
     private static final int DEFAULT_MARGIN = 15;
@@ -27,13 +32,19 @@ public class ImageTabPanel extends FlowPanel {
     private Image preview;
     private FlowPanel imagePanel;
 
-    public ImageTabPanel(final String selected,
+    public ImageTabPanel(final String speciesName,
+                         final String selected,
                          final String flagged,
+                         final Boolean includeInteractors,
                          final String analysisToken,
+                         final String resource,
                          final String fireworksProfile) {
+        this.speciesName = speciesName;
         this.selected = selected;
         this.flagged = flagged;
+        this.includeInteractors = includeInteractors;
         this.analysisToken = analysisToken;
+        this.resource = resource;
         this.fireworksProfile = fireworksProfile;
 
         // Initialise the panel with a loading animation
@@ -71,7 +82,9 @@ public class ImageTabPanel extends FlowPanel {
         });
 
         String previewUrl = generateUrlList(ImageDownloadType.SVG).get(0) + "&title=false";
-        preview.setUrl(previewUrl);
+        preview.setUrl(UriUtils.encode(previewUrl));
+        Console.info(UriUtils.isSafeUri(previewUrl));
+//        preview.setUrl(previewUrl);
     }
 
 
@@ -81,7 +94,16 @@ public class ImageTabPanel extends FlowPanel {
 
         for (ImageDownloadType format : ImageDownloadType.values()) {
             List<String> urls = generateUrlList(format);
-            rtn.add(new DownloadButton<>(format, urls));
+            // Add all buttons with one exception;
+            // SBGN should only be added if a node is selected.
+            DownloadButton<ImageDownloadType> button =  new DownloadButton<>(format, urls.stream().map(u -> UriUtils.encode(u)).collect(Collectors.toList()));
+            if(format != ImageDownloadType.SBGN) {
+                rtn.add(button);
+            } else {
+                if (selected!=null && !selected.isEmpty()) {
+                    rtn.add(button);
+                }
+            }
         }
 
         return rtn;
@@ -90,19 +112,28 @@ public class ImageTabPanel extends FlowPanel {
     public List<String> generateUrlList(ImageDownloadType type) {
         List<String> rtn = new ArrayList<>();
 
-        String baseUrl = type.getTemplateURL();
+        String baseUrl = type.getTemplateURL().replace("__SPECIES__", UriUtils.encode(speciesName));
+
+        if(selected!=null && !selected.isEmpty()) {
+            baseUrl = baseUrl.replace("__STID__", selected);
+        }
 
         if (baseUrl.contains("__PARAMS__")) {
             List<String> params = new ArrayList<>();
 
             params.add("margin=" + DEFAULT_MARGIN);
-            params.add("ehld=true");
             params.add("diagramProfile=" + fireworksProfile);
 
             if (selected != null) { params.add("sel=" + selected); }
-            if (flagged != null)  { params.add("flg=" + flagged); }
+            if (flagged != null)  {
+                params.add("flg=" + flagged);
+                if(includeInteractors!=null) {
+                    params.add("flgInteractors=" + includeInteractors);
+                }
+            }
             if (analysisToken != null && !analysisToken.isEmpty()) {
                 params.add("token=" + analysisToken);
+                params.add("resource=" + resource);
             }
 
             String paramsStr = "?" + params.stream().collect(Collectors.joining("&"));
