@@ -54,7 +54,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
     private final AnalysisInfo analysisInfo = new AnalysisInfo();
 
-    private String speciesName;
+    private Long speciesId;
 
     private Node selected;
     private double fontSize;
@@ -89,7 +89,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
     FireworksCanvas(EventBus eventBus, Graph graph) throws CanvasNotSupportedException {
         this.getElement().setClassName("pwp-FireworksCanvas");
         this.eventBus = eventBus;
-        this.speciesName = graph.getSpeciesName();
+        this.speciesId = graph.getSpeciesId();
         this.thumbnail = new FireworksThumbnail(eventBus, graph);
 
         int width = (int) Math.ceil(graph.getMaxX());
@@ -391,7 +391,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                     Image snapshot = new Image();
                     snapshot.setUrl(ctx.getCanvas().toDataUrl("image/png"));
                     final ExportDialog dialog = new ExportDialog(
-                            speciesName,
+                            speciesId,
                             selected != null ? selected.getStId() : null,
                             selected != null ? selected.getDbId() : null,
                             flagTerm,

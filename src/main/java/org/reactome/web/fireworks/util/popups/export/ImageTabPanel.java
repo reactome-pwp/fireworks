@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 public class ImageTabPanel extends FlowPanel {
-    private final String speciesName;
+    private final Long speciesId;
     private final String selected;
     private final String flagged;
     private final Boolean includeInteractors;
@@ -30,14 +30,14 @@ public class ImageTabPanel extends FlowPanel {
     private Image preview;
     private FlowPanel imagePanel;
 
-    public ImageTabPanel(final String speciesName,
+    public ImageTabPanel(final Long speciesId,
                          final String selected,
                          final String flagged,
                          final Boolean includeInteractors,
                          final String analysisToken,
                          final String resource,
                          final String fireworksProfile) {
-        this.speciesName = speciesName;
+        this.speciesId = speciesId;
         this.selected = selected;
         this.flagged = flagged;
         this.includeInteractors = includeInteractors;
@@ -108,7 +108,7 @@ public class ImageTabPanel extends FlowPanel {
     public List<String> generateUrlList(ImageDownloadType type) {
         List<String> rtn = new ArrayList<>();
 
-        String baseUrl = type.getTemplateURL().replace("__SPECIES__", speciesName);
+        String baseUrl = type.getTemplateURL().replace("__SPECIES__", speciesId + "");
 
         if(selected!=null && !selected.isEmpty()) {
             baseUrl = baseUrl.replace("__STID__", selected);
