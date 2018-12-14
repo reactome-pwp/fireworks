@@ -59,6 +59,7 @@ public class WidgetTest implements EntryPoint {
             public void onSuccess() {
                 FireworksFactory.CONSOLE_VERBOSE = true;
                 FireworksFactory.EVENT_BUS_VERBOSE = true;
+                FireworksFactory.SERVER = "https://dev.reactome.org";
 //                FireworksFactory.SHOW_INFO = true;
 
                 loadSpeciesFireworks("Homo_sapiens");

@@ -43,7 +43,7 @@ This Fireworks viewer is implemented in Java using GWT. It is a Maven component 
     <dependency>
         <groupId>org.reactome.web</groupId>
         <artifactId>fireworks</artifactId>
-        <version>1.0.0</version>
+        <version>1.8.3</version>
     </dependency>
 </dependencies>
 ```
