@@ -36,7 +36,7 @@ public class TitlePanel extends FlowPanel implements ClickHandler,
 
     private String termToFlagBy;
     private String flaggedTerm;
-    private Boolean includeInteractors = true;
+    private Boolean includeInteractors = false;
 
     public TitlePanel(EventBus eventBus) {
         this.eventBus = eventBus;

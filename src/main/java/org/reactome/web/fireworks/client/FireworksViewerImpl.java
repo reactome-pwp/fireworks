@@ -84,7 +84,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     private Set<Edge> edgesToFlag = null;
 
     private String flagTerm;
-    private Boolean includeInteractors = true;
+    private Boolean includeInteractors = false;
 
     FireworksViewerImpl(String json) {
         this.eventBus = new FireworksEventBus();
