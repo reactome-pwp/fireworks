@@ -14,7 +14,6 @@ import java.util.List;
 public enum ImageDownloadType implements DownloadType {
     SVG     ("SVG",     "/fireworks/__SPECIES__.svg__PARAMS__",   "SVG",     ImageFormatIcons.INSTANCE.SVGIcon()),
     PNG     ("PNG",     "/fireworks/__SPECIES__.png__PARAMS__",   "PNG",     ImageFormatIcons.INSTANCE.PNGIcon(),    true),
-    JPEG    ("JPEG",    "/fireworks/__SPECIES__.jpeg__PARAMS__",  "JPEG",    ImageFormatIcons.INSTANCE.JPEGIcon(),   true),
     JPG     ("JPG",     "/fireworks/__SPECIES__.jpg__PARAMS__",   "JPG",     ImageFormatIcons.INSTANCE.JPGIcon(),    true),
     GIF     ("GIF",     "/fireworks/__SPECIES__.gif__PARAMS__",   "GIF",     ImageFormatIcons.INSTANCE.GIFIcon(),    true),
     SBGN    ("SBGN",    "/event/__STID__.sbgn__PARAMS__",         "SBGN",    ImageFormatIcons.INSTANCE.SBGNIcon());
@@ -74,9 +73,6 @@ public enum ImageDownloadType implements DownloadType {
 
         @Source("../images/export2gif.png")
         ImageResource GIFIcon();
-
-        @Source("../images/export2jpeg.png")
-        ImageResource JPEGIcon();
 
         @Source("../images/export2jpg.png")
         ImageResource JPGIcon();
