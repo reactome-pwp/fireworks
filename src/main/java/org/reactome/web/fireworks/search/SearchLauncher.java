@@ -13,9 +13,9 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import org.reactome.web.fireworks.client.FireworksFactory;
 import org.reactome.web.fireworks.controls.common.IconButton;
 import org.reactome.web.fireworks.controls.common.IconToggleButton;
-import org.reactome.web.fireworks.controls.common.PwpButton;
 import org.reactome.web.fireworks.events.SearchKeyPressedEvent;
 import org.reactome.web.fireworks.events.SearchResetEvent;
 import org.reactome.web.fireworks.handlers.SearchKeyPressedHandler;
@@ -24,7 +24,6 @@ import org.reactome.web.fireworks.search.events.*;
 import org.reactome.web.fireworks.search.facets.FacetsPanel;
 import org.reactome.web.fireworks.search.handlers.*;
 import org.reactome.web.fireworks.search.searchbox.*;
-import org.reactome.web.fireworks.util.Console;
 
 import java.util.Date;
 
@@ -116,7 +115,7 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
         String expandSearch = Cookies.getCookie(SEARCH_EXPANDED_COOKIE);
         if (expandSearch == null || expandSearch.isEmpty()) {
             if(!isExpanded) {
-                this.expandPanel();
+                this.expandPanel(FireworksFactory.RESPOND_TO_SEARCH_SHORTCUT);
             }
         }
 
@@ -253,12 +252,18 @@ public class SearchLauncher extends AbsolutePanel implements ClickHandler, Searc
         fireEvent(new OptionsCollapsedEvent());
     }
 
-    private void expandPanel(){
+    private void expandPanel() {
+        expandPanel(true);
+    }
+
+    private void expandPanel(boolean focus){
         addStyleName(RESOURCES.getCSS().launchPanelExpanded());
         input.addStyleName(RESOURCES.getCSS().inputActive());
         isExpanded = true;
         fireEvent(new PanelExpandedEvent());
-        focusTimer.schedule(FOCUS_IN_TEXTBOX_DELAY);
+        if (focus) {
+            focusTimer.schedule(FOCUS_IN_TEXTBOX_DELAY);
+        }
     }
 
     private void expandPanelVertically(){
