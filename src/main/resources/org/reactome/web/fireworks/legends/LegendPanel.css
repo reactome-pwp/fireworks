@@ -236,7 +236,8 @@
     outline: none;
     font-size: 12px;
     width: 73px;
-    padding: 0;
+    height: unset;
+    -webkit-appearance: menulist;
 }
 
 .flaggedItemsLabel {
