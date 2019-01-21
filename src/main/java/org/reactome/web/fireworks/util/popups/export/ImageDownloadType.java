@@ -12,11 +12,12 @@ import java.util.List;
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 public enum ImageDownloadType implements DownloadType {
-    SVG     ("SVG",     "/fireworks/__SPECIES__.svg__PARAMS__",   "SVG",     ImageFormatIcons.INSTANCE.SVGIcon()),
-    PNG     ("PNG",     "/fireworks/__SPECIES__.png__PARAMS__",   "PNG",     ImageFormatIcons.INSTANCE.PNGIcon(),    true),
-    JPG     ("JPG",     "/fireworks/__SPECIES__.jpg__PARAMS__",   "JPG",     ImageFormatIcons.INSTANCE.JPGIcon(),    true),
-    GIF     ("GIF",     "/fireworks/__SPECIES__.gif__PARAMS__",   "GIF",     ImageFormatIcons.INSTANCE.GIFIcon(),    true),
-    SBGN    ("SBGN",    "/event/__STID__.sbgn__PARAMS__",         "SBGN",    ImageFormatIcons.INSTANCE.SBGNIcon());
+    SVG     ("SVG",     "/fireworks/__SPECIES__.svg__PARAMS__",         "SVG",     ImageFormatIcons.INSTANCE.SVGIcon()),
+    PNG     ("PNG",     "/fireworks/__SPECIES__.png__PARAMS__",         "PNG",     ImageFormatIcons.INSTANCE.PNGIcon(),    true),
+    JPG     ("JPG",     "/fireworks/__SPECIES__.jpg__PARAMS__",         "JPG",     ImageFormatIcons.INSTANCE.JPGIcon(),    true),
+    GIF     ("GIF",     "/fireworks/__SPECIES__.gif__PARAMS__",         "GIF",     ImageFormatIcons.INSTANCE.GIFIcon(),    true),
+    PDF    ( "PDF",     "/document/event/__STID__.pdf__PARAMS__",       "PDF",     ImageFormatIcons.INSTANCE.PDFIcon()),
+    SBGN    ("SBGN",    "/event/__STID__.sbgn__PARAMS__",               "SBGN",    ImageFormatIcons.INSTANCE.SBGNIcon());
 
     //NOTE: please put the quality values below in ascending order
     public static final List<Integer> QUALITIES = Arrays.asList(2, 5, 7);
@@ -82,6 +83,9 @@ public enum ImageDownloadType implements DownloadType {
 
         @Source("../images/export2sbgn.png")
         ImageResource SBGNIcon();
+
+        @Source("../images/export2pdf.png")
+        ImageResource PDFIcon();
 
     }
 }

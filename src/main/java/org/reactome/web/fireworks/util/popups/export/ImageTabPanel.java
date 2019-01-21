@@ -93,7 +93,7 @@ public class ImageTabPanel extends FlowPanel {
             // Add all buttons with one exception;
             // SBGN should only be added if a node is selected.
             DownloadButton<ImageDownloadType> button =  new DownloadButton<>(format, urls);
-            if(format != ImageDownloadType.SBGN) {
+            if(format != ImageDownloadType.SBGN && format != ImageDownloadType.PDF) {
                 rtn.add(button);
             } else {
                 if (selected!=null && !selected.isEmpty()) {
