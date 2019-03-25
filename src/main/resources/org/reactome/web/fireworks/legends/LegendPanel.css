@@ -7,12 +7,15 @@
     -webkit-box-shadow: 3px 3px 5px 0 rgba(50, 50, 50, 0.75); /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
     -moz-box-shadow:    3px 3px 5px 0 rgba(50, 50, 50, 0.75); /* Firefox 3.5 - 3.6 */
     box-shadow:         3px 3px 5px 0 rgba(50, 50, 50, 0.75); /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+
+    -webkit-transition: height 0.1s;
+    -moz-transition: height 0.1s;
+    transition: height 0.1s;
 }
 
 .analysisControl{
     border-radius: 5px;
     margin-bottom: 10px;
-    /*bottom: 10px;*/
     height: 28px;
 }
 
@@ -23,7 +26,7 @@
     border: 0;
     cursor: pointer;
     float: right;
-    margin: 2px 8px;
+    margin: 2px 8px 2px 5px;
 }
 
 @sprite .close:hover {
@@ -31,7 +34,6 @@
 }
 
 @sprite .close:active:hover {
-    margin: 3px 7px;
     gwt-image: 'closeClicked';
 }
 
@@ -156,7 +158,7 @@
 .enrichmentControl {
     /*centers in the middle*/
     width: 390px;
-    margin-left: -190px; /* width and margin-left are related, please change both if needed */
+    margin-left: -195px; /* width and margin-left are related, please change both if needed */
     left:50%;
 }
 
@@ -251,4 +253,76 @@
     float: left;
     margin-left: 5px;
     margin-top: 6px;
+}
+
+.filterBtn {
+    float: right;
+    margin: 2px 5px 2px 4px;
+    background-color: #58C3E5;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    color: white;
+    padding: 0;
+    border: 0;
+}
+
+.filterBtn>div {
+    margin: 0;
+    position: relative;
+}
+
+.filterBtn span {
+    display: none;
+}
+
+.filterBtn img {
+    display: block;
+    height: 24px;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    -webkit-user-drag: none; /* Prevents dragging of images/divs etc */
+}
+
+.filterBtn:hover {
+    background-color: #1E95CF;
+    cursor: pointer !important;
+}
+
+.filterBtn:active:hover {
+    background-color: #066B9E;
+    cursor: pointer !important;
+}
+
+.filterBtn:disabled, .filterBtn:disabled:hover, .filterBtn:disabled:active{
+    background-color: #9a9c9e;
+    cursor: default !important;
+}
+
+.infoPanel {
+    padding: 2px;
+    margin-top: 6px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+.infoPanelTitle {
+    font-size: smaller;
+    color: #1E95CF;
+}
+
+.infoPanelTag {
+    background-color: #1E95CF;
+    color: white;
+    border-radius: 10px;
+    padding: 0 6px 0 6px;
+    margin: 2px 0 2px 0;
+    cursor: default;
+    line-height: normal;
 }

@@ -1,6 +1,7 @@
 package org.reactome.web.fireworks.profiles;
 
 import org.reactome.web.fireworks.profiles.model.Profile;
+import org.reactome.web.fireworks.util.Color;
 import org.reactome.web.fireworks.util.gradient.ThreeColorGradient;
 
 /**
@@ -17,6 +18,9 @@ public final class FireworksProfile {
     ThreeColorGradient edgeEnrichment;
     ThreeColorGradient edgeExpression;
 
+    ThreeColorGradient nodeBaseGradient;
+    ThreeColorGradient edgeBaseGradient;
+
     FireworksProfile(Profile profile) {
         this.profile = profile;
         try {
@@ -25,6 +29,11 @@ public final class FireworksProfile {
 
             this.edgeEnrichment = new ThreeColorGradient(profile.getEdge().getEnrichment());
             this.edgeExpression = new ThreeColorGradient(profile.getEdge().getExpression());
+
+            Color darkerNodeGray = new Color(profile.getNode().getHit()).darker(0.5);
+            Color darkerEdgeGray = new Color(profile.getEdge().getHit()).darker(0.5);
+            this.nodeBaseGradient = new ThreeColorGradient("#" + darkerNodeGray.getHex(), null, profile.getNode().getHit());
+            this.edgeBaseGradient = new ThreeColorGradient("#" + darkerEdgeGray.getHex(), null, profile.getEdge().getHit());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,6 +45,9 @@ public final class FireworksProfile {
     }
     public final String getNodeHighlightColour(){
         return this.profile.getNode().getHighlight();
+    }
+    public final String getNodeHitColour(){
+        return this.profile.getNode().getHit();
     }
     public final String getNodeSelectionColour(){
         return this.profile.getNode().getSelection();
@@ -53,17 +65,46 @@ public final class FireworksProfile {
             return this.profile.getNode().getHit();
         }
     }
+
+    public final String getNodeEnrichmentColour(double p, double filter) {
+        if (filter > THRESHOLD) {
+            if (p <= THRESHOLD) {
+                return this.nodeEnrichment.getColor(p/THRESHOLD);
+            } else if (p <= filter) {
+                return nodeBaseGradient.getColor(p/filter);
+            } else {
+                return this.profile.getNode().getHit();
+            }
+        } else {
+            if (p <= filter) {
+                return this.nodeEnrichment.getColor(p/THRESHOLD);
+            } else {
+                return this.profile.getNode().getHit();
+            }
+        }
+    }
+
     public final String getNodeCoverageColour(double p) {
         return this.nodeEnrichment.getColor(p);
     }
     public final String getNodeExpressionColour(double p) {
         return this.nodeExpression.getColor(p);
     }
-    public final String getNodeExpressionColour(double p, double expression, double min, double max) {
-        if(p<=THRESHOLD) {
-            return this.nodeExpression.getColor(expression, min, max);
-        }else{
-            return this.profile.getNode().getHit();
+    public final String getNodeExpressionColour(double p, double expression, double min, double max, double filter) {
+        if (filter > THRESHOLD) {
+            if (p <= THRESHOLD) {
+                return this.nodeExpression.getColor(expression, min, max);
+            } else if (p <= filter) {
+                return nodeBaseGradient.getColor(p/filter);
+            } else{
+                return this.profile.getNode().getHit();
+            }
+        } else {
+            if (p <= filter) {
+                return this.nodeExpression.getColor(expression, min, max);
+            } else {
+                return this.profile.getNode().getHit();
+            }
         }
     }
 
@@ -74,6 +115,9 @@ public final class FireworksProfile {
     }
     public final String getEdgeHighlightColour(){
         return this.profile.getEdge().getHighlight();
+    }
+    public final String getEdgeHitColour(){
+        return this.profile.getEdge().getHit();
     }
     public final String getEdgeSelectionColour(){
         return this.profile.getEdge().getSelection();
@@ -89,14 +133,41 @@ public final class FireworksProfile {
             return this.profile.getEdge().getHit();
         }
     }
+    public final String getEdgeEnrichmentColour(double p, double filter) {
+        if (filter > THRESHOLD) {
+            if (p <= THRESHOLD) {
+                return this.edgeEnrichment.getColor(p/THRESHOLD);
+            } else if (p <= filter) {
+                return edgeBaseGradient.getColor(p/filter);
+            } else {
+                return this.profile.getEdge().getHit();
+            }
+        } else {
+            if (p <= filter) {
+                return this.edgeEnrichment.getColor(p/THRESHOLD);
+            } else {
+                return this.profile.getEdge().getHit();
+            }
+        }
+    }
     public final String getEdgeCoverageColour(double p) {
         return this.edgeEnrichment.getColor(p);
     }
-    public final String getEdgeExpressionColour(double p, double expression, double min, double max) {
-        if(p<=THRESHOLD) {
-            return this.edgeExpression.getColor(expression, min, max);
-        }else{
-            return this.profile.getEdge().getHit();
+    public final String getEdgeExpressionColour(double p, double expression, double min, double max, double filter) {
+        if (filter > THRESHOLD) {
+            if (p <= THRESHOLD) {
+                return this.edgeExpression.getColor(expression, min, max);
+            } else if (p <= filter) {
+                return edgeBaseGradient.getColor(p/filter);
+            } else{
+                return this.profile.getEdge().getHit();
+            }
+        } else {
+            if (p <= filter) {
+                return this.edgeExpression.getColor(expression, min, max);
+            } else {
+                return this.profile.getEdge().getHit();
+            }
         }
     }
 

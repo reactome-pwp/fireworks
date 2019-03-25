@@ -494,4 +494,26 @@ public class Color {
 
         setHex();
     }
+
+    /**
+     * Creates a darker version of this color.
+     * <p>
+     * This method applies an arbitrary scale factor to each of the three RGB
+     * components of the color to create a darker version of the same
+     * color. Although <code>brighter</code> and <code>darker</code> are
+     * inverse operations, the results of a series of invocations of
+     * these two methods may be inconsistent because of rounding errors.
+     * @return  a new <code>Color</code> object,
+     * a darker version of this color.
+     */
+    public Color darker(double factor) {
+        try {
+            return new Color(Math.max((int) (getRed() * factor), 0),
+                    Math.max((int) (getGreen() * factor), 0),
+                    Math.max((int) (getBlue() * factor), 0));
+        } catch (Exception e) {
+            return this;
+        }
+
+    }
 }

@@ -30,6 +30,8 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
     private InlineLabel top;
     private InlineLabel bottom;
 
+    private Double fpValue = 1d;
+
     public EnrichmentLegend(EventBus eventBus) {
         super(eventBus);
         this.gradient = createCanvas(30, 200);
@@ -74,6 +76,7 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
     @Override
     public void onAnalysisPerformed(AnalysisPerformedEvent e) {
         reset();
+        this.fpValue = e.getFilter() != null && e.getFilter().getpValue() != null ? fpValue = e.getFilter().getpValue() : 1d;
         switch (e.getAnalysisType()) {
             case OVERREPRESENTATION:
             case SPECIES_COMPARISON:
@@ -138,6 +141,7 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
     private void reset(){
         top.setText("0");
         bottom.setText("0.05");
+        fpValue = 1d;
         this.setVisible(false);
         if (COVERAGE) this.eventBus.fireEventFromSource(new OverlayTypeChangedEvent(COVERAGE = false), this);
     }
@@ -162,6 +166,22 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
 
         Context2d ctx = this.flag.getContext2d();
         ctx.clearRect(0, 0, this.flag.getOffsetWidth(), this.flag.getOffsetHeight());
+
+        // Draw filtered-out region
+        if (fpValue <= 0.05) {
+            double f = 5 + (200 * fpValue / 0.05);
+            ctx.setFillStyle(FireworksColours.PROFILE.getNodeHitColour());
+            ctx.beginPath();
+            ctx.fillRect(10, f, 30, 205 - f);
+            ctx.closePath();
+
+            ctx.setStrokeStyle("#02a0e3");
+            ctx.beginPath();
+            ctx.moveTo(10, f);
+            ctx.lineTo(40, f);
+            ctx.stroke();
+            ctx.closePath();
+        }
 
         if (this.hovered != null) {
             Integer y = COVERAGE ? 5 : null;

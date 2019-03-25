@@ -3,6 +3,7 @@ package org.reactome.web.fireworks.model;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.regexp.shared.RegExp;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.analysis.client.model.EntityStatistics;
 import org.reactome.web.analysis.client.model.SpeciesFilteredResult;
 import org.reactome.web.fireworks.interfaces.Drawable;
@@ -29,6 +30,8 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     private double angle;
     private double currentSize;
     private double originalSize;
+
+    private boolean insideFilter;
 
     private String enrichmentColour;
     private String coverageColour;
@@ -310,13 +313,28 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
         }
     }
 
-    public void setAnalysisResultData(SpeciesFilteredResult result, EntityStatistics statistics) {
+    public boolean isInsideFilter() {
+        return insideFilter;
+    }
+
+    public void setAnalysisResultData(SpeciesFilteredResult result, EntityStatistics statistics, ResultFilter filter) {
         this.statistics = statistics;
+        placeInsideFilter(filter);
+
+        if (!isInsideFilter()) {
+            this.enrichmentColour = FireworksColours.PROFILE.getNodeHitColour();
+            for (Edge edge : this.edgesTo){
+                edge.setEnrichmentColour(FireworksColours.PROFILE.getEdgeHitColour());
+            }
+            return;
+        }
+
+        double fPvalue = filter.getpValue() == null ? 1d : filter.getpValue();
         switch (result.getAnalysisType()){
             case SPECIES_COMPARISON:
             case OVERREPRESENTATION:
-                this.enrichmentColour = FireworksColours.PROFILE.getNodeEnrichmentColour(statistics.getpValue());
-                String edgeEnrichmentColour = FireworksColours.PROFILE.getEdgeEnrichmentColour(statistics.getpValue());
+                this.enrichmentColour = FireworksColours.PROFILE.getNodeEnrichmentColour(statistics.getpValue(), fPvalue);
+                String edgeEnrichmentColour = FireworksColours.PROFILE.getEdgeEnrichmentColour(statistics.getpValue(), fPvalue);
 
                 double p = statistics.getFound() / (double) statistics.getTotal();
                 this.coverageColour = FireworksColours.PROFILE.getNodeCoverageColour(p);
@@ -334,8 +352,8 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                     this.expColours = new ArrayList<>();
                     List<String> edgeExpColours = new ArrayList<>();
                     for (Double v : exp) {
-                        this.expColours.add(FireworksColours.PROFILE.getNodeExpressionColour(statistics.getpValue(), v, min, max));
-                        edgeExpColours.add(FireworksColours.PROFILE.getEdgeExpressionColour(statistics.getpValue(), v, min, max));
+                        this.expColours.add(FireworksColours.PROFILE.getNodeExpressionColour(statistics.getpValue(), v, min, max, fPvalue));
+                        edgeExpColours.add(FireworksColours.PROFILE.getEdgeExpressionColour(statistics.getpValue(), v, min, max, fPvalue));
                     }
                     for (Edge edge : this.edgesTo) edge.setExpColours(edgeExpColours);
                 }
@@ -404,6 +422,28 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 "stId='" + stId + '\'' +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    private void placeInsideFilter(ResultFilter filter) {
+        boolean inside = true;
+        if (filter != null && statistics != null) {
+            String resource = filter.getResource();
+            Double pValue = filter.getpValue();
+            boolean includeDisease = filter.getIncludeDisease();
+            Integer min = filter.getMin();
+            Integer max = filter.getMax();
+
+            if (!resource.equalsIgnoreCase(statistics.getResource())) {
+                inside = false;
+            } else if (pValue != null && pValue < statistics.getpValue() ) {
+                inside = false;
+            } else if (!includeDisease && false) { //TODO change this when disease information is available in the node
+                inside = false;
+            } else if ((min != null && statistics.getTotal() < min) || (max != null && statistics.getTotal() > max)) {
+                inside = false;
+            }
+        }
+        insideFilter = inside;
     }
 
     private List<String> getLines(){

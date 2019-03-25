@@ -4,6 +4,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RequiresResize;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.fireworks.handlers.*;
 import org.reactome.web.fireworks.model.Node;
 
@@ -63,7 +64,7 @@ public interface FireworksViewer extends IsWidget, HasHandlers, RequiresResize {
 
     void selectNode(Long dbIdentifier);
 
-    void setAnalysisToken(String token, String resource);
+    void setAnalysisToken(String token, ResultFilter filter);
 
     void showAll();
 

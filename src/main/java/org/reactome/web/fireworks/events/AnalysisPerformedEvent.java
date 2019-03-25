@@ -1,6 +1,7 @@
 package org.reactome.web.fireworks.events;
 
 import com.google.gwt.event.shared.GwtEvent;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.analysis.client.model.AnalysisType;
 import org.reactome.web.analysis.client.model.ExpressionSummary;
 import org.reactome.web.analysis.client.model.PathwayBase;
@@ -16,9 +17,11 @@ public class AnalysisPerformedEvent extends GwtEvent<AnalysisPerformedHandler> {
     public static Type<AnalysisPerformedHandler> TYPE = new Type<>();
 
     private SpeciesFilteredResult result;
+    private ResultFilter filter;
 
-    public AnalysisPerformedEvent(SpeciesFilteredResult result) {
+    public AnalysisPerformedEvent(SpeciesFilteredResult result, ResultFilter filter) {
         this.result = result;
+        this.filter = filter;
     }
 
     @Override
@@ -36,6 +39,10 @@ public class AnalysisPerformedEvent extends GwtEvent<AnalysisPerformedHandler> {
 
     public ExpressionSummary getExpressionSummary(){
         return this.result.getExpressionSummary();
+    }
+
+    public ResultFilter getFilter() {
+        return filter;
     }
 
     @Override

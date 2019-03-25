@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.reactome.web.analysis.client.AnalysisClient;
 import org.reactome.web.analysis.client.AnalysisHandler;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.analysis.client.model.AnalysisError;
 import org.reactome.web.analysis.client.model.AnalysisType;
 import org.reactome.web.analysis.client.model.SpeciesFilteredResult;
@@ -65,7 +66,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     private String token;
 
-    private String resource;
+    private ResultFilter filter;
 
     private boolean forceFireworksDraw = true;
 
@@ -243,7 +244,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onAnalysisReset() {
-        this.token = this.resource = null;
+        this.token = null;
+        this.filter = null;
         this.data.resetPathwaysAnalysisResult();
         this.forceFireworksDraw = true;
     }
@@ -292,7 +294,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onCanvasExportRequested(CanvasExportRequestedEvent event) {
-        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, resource);
+        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, filter.getResource());
     }
 
     @Override
@@ -580,19 +582,19 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     @Override
-    public void setAnalysisToken(String token, final String resource){
-        if(token==null || resource==null) return;
-        if(Objects.equals(this.token, token) && Objects.equals(this.resource, resource)) return;
-        this.token = token; this.resource = resource;
+    public void setAnalysisToken(String token, final ResultFilter filter){
+        if (token == null || filter == null) return;
+        if (Objects.equals(this.token, token) && Objects.equals(this.filter, filter)) return;
+        this.token = token; this.filter = filter;
 
         this.canvases.onAnalysisReset();
         this.data.resetPathwaysAnalysisResult();
-        AnalysisClient.filterResultBySpecies(token, resource, this.data.getSpeciesId(), new AnalysisHandler.Pathways() {
+        AnalysisClient.filterResultBySpecies(token, filter.getResource(), this.data.getSpeciesId(), new AnalysisHandler.Pathways() {
             @Override
             public void onPathwaysSpeciesFiltered(SpeciesFilteredResult result) {
                 result.setAnalysisType(AnalysisType.getType(result.getType()));
-                data.setPathwaysAnalysisResult(result); //Data has to be set in the first instance
-                eventBus.fireEventFromSource(new AnalysisPerformedEvent(result), FireworksViewerImpl.this);
+                data.setPathwaysAnalysisResult(result, filter); //Data has to be set in the first instance
+                eventBus.fireEventFromSource(new AnalysisPerformedEvent(result, filter), FireworksViewerImpl.this);
                 forceFireworksDraw = true;
             }
 
@@ -621,7 +623,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void resetAnalysis() {
-        this.token = null; this.resource=null;
+        this.token = null; this.filter=null;
         eventBus.fireEventFromSource(new AnalysisResetEvent(), this);
     }
 

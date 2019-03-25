@@ -8,6 +8,7 @@ import com.google.gwt.http.client.*;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.user.client.ui.*;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.fireworks.client.FireworksFactory;
 import org.reactome.web.fireworks.client.FireworksViewer;
 
@@ -60,6 +61,7 @@ public class WidgetTest implements EntryPoint {
                 FireworksFactory.CONSOLE_VERBOSE = true;
                 FireworksFactory.EVENT_BUS_VERBOSE = true;
                 FireworksFactory.SERVER = "https://dev.reactome.org";
+                FireworksFactory.RESPOND_TO_SEARCH_SHORTCUT = true;
 //                FireworksFactory.SHOW_INFO = true;
 
                 loadSpeciesFireworks("Homo_sapiens");
@@ -86,6 +88,9 @@ public class WidgetTest implements EntryPoint {
         vp.add(new TestButton("Repro..", "R-HSA-1474165", fireworks));
         vp.add(new TestButton("Striated", "R-HSA-390522", fireworks));
 
+        ResultFilter filterLow = new ResultFilter("TOTAL", null, true, null, null, null );
+        ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.409, false, 1, 1000, null );
+
         FlowPanel fp = new FlowPanel();
         fp.add(new Button("Reload Fireworks", new ClickHandler() {
             @Override
@@ -96,31 +101,31 @@ public class WidgetTest implements EntryPoint {
         fp.add(new Button("OVERREPRESENTATION", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxODAzMjgxNTE2MzNfMTMx", "TOTAL");
+                fireworks.setAnalysisToken("MjAxOTAzMTkxMjAwNDlfMjE%253D", filterLow);
             }
         }));
         fp.add(new Button("OVERREPRESENTATION 2", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxODA3MDIwNTQ2MzVfMw%253D%253D", "TOTAL");
+                fireworks.setAnalysisToken("MjAxOTAzMTkxMjAwNDlfMjE%253D", filterHigh);
             }
         }));
         fp.add(new Button("EXPRESSION", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxNjAyMDkxMTQxMzRfMg%253D%253D", "TOTAL");
+                fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterLow);
             }
         }));
         fp.add(new Button("EXPRESSION 2", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxNjAyMjkwODQzMjZfNw%253D%253D", "TOTAL");
+                fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterHigh);
             }
         }));
         fp.add(new Button("SPECIES COMPARISON", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken(URL.decode("MjAxNjAyMjkwNjU4MDNfNQ%253D%253D"), "TOTAL");
+                fireworks.setAnalysisToken(URL.decode("MjAxNjAyMjkwNjU4MDNfNQ%253D%253D"), filterHigh);
             }
         }));
 
@@ -133,8 +138,8 @@ public class WidgetTest implements EntryPoint {
         RootLayoutPanel.get().clear();
         RootLayoutPanel.get().add(slp);
 
-//        fireworks.flagItems("15422");
-        fireworks.flagNodes("Reactions and Boxes Mixed", getPathways(TestSource.SOURCE.reactionsAndBoxesMixed().getText()));
+        fireworks.flagItems("FYN", false);
+//        fireworks.flagNodes("Reactions and Boxes Mixed", getPathways(TestSource.SOURCE.reactionsAndBoxesMixed().getText()));
 
     }
 

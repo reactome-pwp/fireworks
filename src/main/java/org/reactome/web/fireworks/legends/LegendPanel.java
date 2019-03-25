@@ -40,6 +40,9 @@ public abstract class LegendPanel extends AbsolutePanel {
         @Source("images/close_normal.png")
         ImageResource closeNormal();
 
+        @Source("images/filter_warning.png")
+        ImageResource filterWarningIcon();
+
         @Source("images/forward_clicked.png")
         ImageResource forwardClicked();
 
@@ -145,6 +148,14 @@ public abstract class LegendPanel extends AbsolutePanel {
         String flaggedItemsLabel();
 
         String flaggedItemsLoadingIcon();
+
+        String filterBtn();
+
+        String infoPanel();
+
+        String infoPanelTitle();
+
+        String infoPanelTag();
     }
 
     protected EventBus eventBus;
