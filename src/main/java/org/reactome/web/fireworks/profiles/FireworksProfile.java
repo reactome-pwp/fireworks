@@ -39,6 +39,10 @@ public final class FireworksProfile {
         }
     }
 
+    public final String getName() {
+        return profile.getName();
+    }
+
     /*#################### NODE ####################*/
     public final String getNodeInitialColour(){
         return this.profile.getNode().getInitial();

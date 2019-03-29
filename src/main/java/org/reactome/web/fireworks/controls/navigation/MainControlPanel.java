@@ -25,6 +25,7 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
     private EventBus eventBus;
     private Button fitAll;
     private Button open;
+    private Button foam;
 
     public MainControlPanel(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -40,9 +41,15 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
             this.add(this.open);
         }
 
+        if (FireworksFactory.SHOW_FOAM_BTN) {
+            this.foam = new IconButton(RESOURCES.foamIcon(), RESOURCES.getCSS().diagram(), "Open voronoi visualisation", this);
+            this.add(foam);
+        }
+
         this.eventBus.addHandler(NodeSelectedEvent.TYPE, this);
         this.eventBus.addHandler(NodeSelectedResetEvent.TYPE, this);
     }
+
 
     @Override
     public void onClick(ClickEvent event) {
@@ -51,6 +58,8 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
             this.eventBus.fireEventFromSource(new ControlActionEvent(ControlAction.FIT_ALL), this);
         } else if (btn.equals(this.open)) {
             this.eventBus.fireEventFromSource(new ControlActionEvent(ControlAction.OPEN), this);
+        } else if (btn.equals(this.foam)) {
+            this.eventBus.fireEventFromSource(new ControlActionEvent(ControlAction.FOAM), this);
         }
     }
 
@@ -90,6 +99,9 @@ public class MainControlPanel extends FlowPanel implements ClickHandler, NodeSel
 
         @Source("images/diagram.png")
         ImageResource diagramIcon();
+
+        @Source("images/foam.png")
+        ImageResource foamIcon();
     }
 
     /**

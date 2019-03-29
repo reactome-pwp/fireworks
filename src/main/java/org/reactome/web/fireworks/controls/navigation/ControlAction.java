@@ -16,5 +16,7 @@ public enum ControlAction {
     DOWN,
     LEFT,
 
-    OPEN
+    OPEN,
+
+    FOAM
 }

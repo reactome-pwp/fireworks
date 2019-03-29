@@ -27,6 +27,7 @@ import org.reactome.web.fireworks.model.FireworksData;
 import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.model.factory.ModelFactory;
+import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.search.events.SuggestionHoveredEvent;
 import org.reactome.web.fireworks.search.events.SuggestionSelectedEvent;
 import org.reactome.web.fireworks.search.handlers.SuggestionHoveredHandler;
@@ -259,14 +260,15 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     @Override
     public void onControlAction(ControlActionEvent event) {
         switch (event.getAction()){
-            case FIT_ALL:   this.manager.displayAllNodes(true); break;
-            case ZOOM_IN:   this.manager.zoom(0.25);            break;
-            case ZOOM_OUT:  this.manager.zoom(-0.25);           break;
-            case UP:        this.manager.translate(0, 10);      break;
-            case RIGHT:     this.manager.translate(-10, 0);     break;
-            case DOWN:      this.manager.translate(0, -10);     break;
-            case LEFT:      this.manager.translate(10, 0);      break;
-            case OPEN:      this.openNode(this.selected);       break;
+            case FIT_ALL:   this.manager.displayAllNodes(true);  break;
+            case ZOOM_IN:   this.manager.zoom(0.25);                break;
+            case ZOOM_OUT:  this.manager.zoom(-0.25);               break;
+            case UP:        this.manager.translate(0, 10);        break;
+            case RIGHT:     this.manager.translate(-10, 0);       break;
+            case DOWN:      this.manager.translate(0, -10);       break;
+            case LEFT:      this.manager.translate(10, 0);        break;
+            case OPEN:      this.openNode(this.selected);                  break;
+            case FOAM:      this.openFoam(this.selected);                  break;
         }
     }
 
@@ -744,6 +746,29 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         if(node!=null){
             this.manager.expandNode(node);
         }
+    }
+
+    private void openFoam(Node node) {
+        StringBuilder url = new StringBuilder("http://95.179.206.129");
+        url.append("?color=").append(FireworksColours.PROFILE.getName().toUpperCase());
+        if (token != null && !token.isEmpty()) {
+            url.append("&analysis=").append(token);
+        }
+
+        if (filter != null) {
+            url.append("&").append(filter);
+        }
+
+        if (node != null) {
+            url.append("&sel=").append(node.getStId());
+        }
+
+        if (flagTerm != null && !flagTerm.isEmpty()) {
+            url.append("&flg=").append(flagTerm);
+        }
+
+        Window.open(url.toString(), "_blank", "");
+
     }
 
     private void setMouseDownPosition(Element element, MouseEvent event){

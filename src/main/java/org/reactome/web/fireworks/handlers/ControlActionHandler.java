@@ -8,5 +8,6 @@ import org.reactome.web.fireworks.events.ControlActionEvent;
  */
 public interface ControlActionHandler extends EventHandler {
 
-    public void onControlAction(ControlActionEvent event);
+    void onControlAction(ControlActionEvent event);
+
 }

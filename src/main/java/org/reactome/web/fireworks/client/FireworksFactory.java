@@ -14,6 +14,8 @@ public abstract class FireworksFactory {
 
     public static boolean EDGES_SELECTABLE = true;
     public static boolean SHOW_DIAGRAM_BTN = true;
+    public static boolean SHOW_FOAM_BTN = false;
+
     public static boolean OPEN_NODE_ACTION = true;
 
     public static String SERVER = "";
