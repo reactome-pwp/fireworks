@@ -89,7 +89,7 @@ public class WidgetTest implements EntryPoint {
         vp.add(new TestButton("Striated", "R-HSA-390522", fireworks));
 
         ResultFilter filterLow = new ResultFilter("TOTAL", null, true, null, null, null );
-        ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.409, false, 1, 1000, null );
+        ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.4, false, 1, 1000, null );
 
         FlowPanel fp = new FlowPanel();
         fp.add(new Button("Reload Fireworks", new ClickHandler() {
@@ -101,13 +101,13 @@ public class WidgetTest implements EntryPoint {
         fp.add(new Button("OVERREPRESENTATION", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMTkxMjAwNDlfMjE%253D", filterLow);
+                fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterLow);
             }
         }));
         fp.add(new Button("OVERREPRESENTATION 2", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMTkxMjAwNDlfMjE%253D", filterHigh);
+                fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterHigh);
             }
         }));
         fp.add(new Button("EXPRESSION", new ClickHandler() {
