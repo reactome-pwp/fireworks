@@ -268,7 +268,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
             case DOWN:      this.manager.translate(0, -10);       break;
             case LEFT:      this.manager.translate(10, 0);        break;
             case OPEN:      this.openNode(this.selected);                  break;
-            case FOAM:      this.openFoam(this.selected);                  break;
+            case FOAM:      this.openFoamTree(this.selected);              break;
         }
     }
 
@@ -748,9 +748,10 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         }
     }
 
-    private void openFoam(Node node) {
+    private void openFoamTree(Node node) {
         StringBuilder url = new StringBuilder("http://95.179.206.129");
-        url.append("?color=").append(FireworksColours.PROFILE.getName().toUpperCase());
+        url.append("?species=").append(data.getSpeciesId());
+        url.append("&color=").append(FireworksColours.PROFILE.getName().toUpperCase());
         if (token != null && !token.isEmpty()) {
             url.append("&analysis=").append(token);
         }
