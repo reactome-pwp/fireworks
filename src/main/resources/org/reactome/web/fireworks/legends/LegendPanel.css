@@ -199,7 +199,7 @@
     text-overflow: ellipsis;
     display: inline-block;
     white-space: nowrap;
-    max-width: 225px;
+    max-width: 205px;
 }
 
 .expressionControl canvas {
