@@ -233,6 +233,9 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
                     edge.drawThumbnail(ctx, this.factor);
                     break;
                 case EXPRESSION:
+                case GSA_STATISTICS:
+                case GSVA:
+                case GSA_REGULATION: //TODO
                     ctx.setStrokeStyle(edge.getExpressionColor(column));
                     edge.drawThumbnail(ctx, this.factor);
                     break;

@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import org.reactome.web.analysis.client.filter.ResultFilter;
-import org.reactome.web.analysis.client.model.AnalysisType;
 import org.reactome.web.analysis.client.model.ExpressionSummary;
 import org.reactome.web.fireworks.controls.common.IconButton;
 import org.reactome.web.fireworks.events.AnalysisPerformedEvent;
@@ -108,21 +107,26 @@ public class ExpressionControl extends LegendPanel implements ClickHandler, Slid
 
     @Override
     public void onAnalysisPerformed(AnalysisPerformedEvent e) {
-        if(e.getAnalysisType().equals(AnalysisType.EXPRESSION)) {
-            this.currentCol = 0;
-            this.eventBus.fireEventFromSource(new ExpressionColumnChangedEvent(this.currentCol), this);
-            this.expressionSummary = e.getExpressionSummary();
-            this.setName();
+        switch (e.getAnalysisType()) {
+            case EXPRESSION:
+            case GSA_STATISTICS:
+            case GSVA:
+            case GSA_REGULATION: //TODO
+                this.currentCol = 0;
+                this.eventBus.fireEventFromSource(new ExpressionColumnChangedEvent(this.currentCol), this);
+                this.expressionSummary = e.getExpressionSummary();
+                this.setName();
 
-            filter = e.getFilter();
-            updateFilterInfo();
-            if(isExpanded)
-                collapse();
+                filter = e.getFilter();
+                updateFilterInfo();
+                if (isExpanded)
+                    collapse();
 
 
-            this.setVisible(true);
-        }else{
-            this.setVisible(false);
+                setVisible(true);
+                break;
+            default:
+                setVisible(false);
         }
     }
 

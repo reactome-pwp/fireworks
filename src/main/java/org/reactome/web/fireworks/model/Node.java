@@ -345,6 +345,9 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 }
                 break;
             case EXPRESSION:
+            case GSA_STATISTICS:
+            case GSVA:
+            case GSA_REGULATION: //TODO:
                 List<Double> exp = this.statistics.getExp();
                 if(exp!=null){
                     double min = result.getExpressionSummary().getMin();

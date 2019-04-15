@@ -85,6 +85,9 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
     public void onAnalysisPerformed(AnalysisPerformedEvent e) {
         switch (e.getAnalysisType()){
             case EXPRESSION:
+            case GSA_STATISTICS:
+            case GSVA:
+            case GSA_REGULATION: //TODO
                 ExpressionSummary es = e.getExpressionSummary();
                 if(es!=null){
                     this.min = es.getMin();

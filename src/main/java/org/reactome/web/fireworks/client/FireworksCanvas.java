@@ -230,6 +230,9 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                         edge.draw(ctx);
                         break;
                     case EXPRESSION:
+                    case GSA_STATISTICS:
+                    case GSVA:
+                    case GSA_REGULATION: //TODO
                         ctx.setStrokeStyle(edge.getExpressionColor(column));
                         edge.draw(ctx);
                         break;
@@ -257,6 +260,9 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                         node.draw(ctx);
                         break;
                     case EXPRESSION:
+                    case GSA_STATISTICS:
+                    case GSVA:
+                    case GSA_REGULATION: //TODO
                         nodeColour = node.getExpressionColor(column);
                         ctx.setFillStyle(nodeColour);
                         ctx.setStrokeStyle(nodeColour);
