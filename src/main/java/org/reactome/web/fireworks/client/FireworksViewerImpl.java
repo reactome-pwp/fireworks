@@ -749,7 +749,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     }
 
     private void openFoamTree(Node node) {
-        StringBuilder url = new StringBuilder("http://95.179.206.129");
+        StringBuilder url = new StringBuilder("/reacfoam");
         url.append("?species=").append(data.getSpeciesId());
         url.append("&color=").append(FireworksColours.PROFILE.getName().toUpperCase());
         if (token != null && !token.isEmpty()) {
