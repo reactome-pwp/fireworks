@@ -44,7 +44,7 @@
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
         <reactome.web.model>2.1.18-SNAPSHOT</reactome.web.model>
-        <reactome.web.analysis-client>1.5.0-SNAPSHOT</reactome.web.analysis-client>
+        <reactome.web.analysis-client>1.5.0</reactome.web.analysis-client>
         <reactome.web.quadtree>1.2.0</reactome.web.quadtree>
         <reactome.web.scroller>1.0.2</reactome.web.scroller>
 
