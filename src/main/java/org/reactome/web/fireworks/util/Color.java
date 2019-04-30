@@ -496,6 +496,24 @@ public class Color {
     }
 
     /**
+     * Returns the converted grayscale Color based on this formula
+     * R' = G' = B'  = 0.299R + 0.587G + 0.114B
+     *
+     * @return
+     */
+    public Color getGray() {
+        float g =  (0.299f * this.r + 0.587f * this.g + 0.114f * this.b);
+        int v = (int) (g * 255);
+        Color gray = null;
+        try {
+            gray = new Color(v, v, v);
+        } catch (Exception e) {
+            //Nothing here
+        }
+        return gray;
+    }
+
+    /**
      * Creates a darker version of this color.
      * <p>
      * This method applies an arbitrary scale factor to each of the three RGB
