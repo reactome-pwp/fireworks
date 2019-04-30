@@ -156,6 +156,8 @@ public abstract class LegendPanel extends AbsolutePanel {
         String infoPanelTitle();
 
         String infoPanelTag();
+
+        String regulationLabel();
     }
 
     protected EventBus eventBus;

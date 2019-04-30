@@ -326,3 +326,12 @@
     cursor: default;
     line-height: normal;
 }
+
+.regulationLabel {
+    width: 40px;
+    height: 15px;
+    text-align: center;
+    font-size: 10px;
+    line-height: 0.9em;
+    position: absolute;
+}

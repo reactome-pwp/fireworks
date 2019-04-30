@@ -141,6 +141,9 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         rightContainerPanel.add(new ExpressionLegend(eventBus));
         bottomContainerPanel.add(new ExpressionControl(eventBus));
 
+        //Regulation legend
+        rightContainerPanel.add(new RegulationLegend(eventBus));
+
         //Launcher panels
         this.add(new LeftTopLauncherPanel(eventBus, graph));
         this.add(new RightTopLauncherPanel(eventBus));
@@ -232,7 +235,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                     case EXPRESSION:
                     case GSA_STATISTICS:
                     case GSVA:
-                    case GSA_REGULATION: //TODO
+                    case GSA_REGULATION:
                         ctx.setStrokeStyle(edge.getExpressionColor(column));
                         edge.draw(ctx);
                         break;
@@ -262,7 +265,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                     case EXPRESSION:
                     case GSA_STATISTICS:
                     case GSVA:
-                    case GSA_REGULATION: //TODO
+                    case GSA_REGULATION:
                         nodeColour = node.getExpressionColor(column);
                         ctx.setFillStyle(nodeColour);
                         ctx.setStrokeStyle(nodeColour);
