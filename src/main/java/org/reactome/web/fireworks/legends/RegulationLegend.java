@@ -19,6 +19,7 @@ import java.util.Map;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 public class RegulationLegend extends LegendPanel implements AnalysisPerformedHandler, AnalysisResetHandler,
         NodeHoverHandler, NodeHoverResetHandler, NodeSelectedHandler, NodeSelectedResetHandler,
@@ -28,11 +29,16 @@ public class RegulationLegend extends LegendPanel implements AnalysisPerformedHa
     private static String BOTTOM_LABEL = "Down regulated";
 
     private static String[] LABELS = {  "Significantly up regulated",
-            "Non significantly up regulated",
-            "Not found",
-            "Non significantly down regulated",
-            "Significantly down regulated"};
+                                        "Non significantly up regulated",
+                                        "Not found",
+                                        "Non significantly down regulated",
+                                        "Significantly down regulated"};
 
+    private static String[] SYMBOLS = { "\u25BC\u25BC",
+                                        "\u25BC",
+                                        "-",
+                                        "\u25B2",
+                                        "\u25B2\u25B2"};
 
     private Canvas gradient;
     private Canvas flag;
@@ -84,7 +90,7 @@ public class RegulationLegend extends LegendPanel implements AnalysisPerformedHa
 
         //Set text properties once
         Context2d ctx = canvas.getContext2d();
-        ctx.setFont("bold 14px Arial");
+        ctx.setFont("bold 13px Arial");
         ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE);
         ctx.setTextAlign(Context2d.TextAlign.CENTER);
         return canvas;
@@ -193,12 +199,13 @@ public class RegulationLegend extends LegendPanel implements AnalysisPerformedHa
             ctx.setShadowColor("rgba(0,0,0,0.5)");
             ctx.setShadowBlur(4);
             ctx.setFillStyle("#FFFFFF");
-            ctx.fillText(key.toString(), 15, i * height + height/2.0);
+            ctx.fillText(SYMBOLS[key + 2], 15, i * height + height/2.0);
 
             i++;
         }
     }
 
+    @SuppressWarnings("Duplicates")
     private void draw(){
         if(!this.isVisible()) return;
 
