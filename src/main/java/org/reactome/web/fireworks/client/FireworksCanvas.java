@@ -398,6 +398,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                             includeInteractors,
                             analysisToken,
                             resource,
+                            EnrichmentLegend.COVERAGE,
                             snapshot
                     );
                     dialog.showCentered();

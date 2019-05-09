@@ -22,6 +22,7 @@ public class ImageTabPanel extends FlowPanel {
     private final Boolean includeInteractors;
     private final String analysisToken;
     private final String resource;
+    private final Boolean coverage;
     private final String fireworksProfile;
 
     private static final int DEFAULT_MARGIN = 15;
@@ -36,6 +37,7 @@ public class ImageTabPanel extends FlowPanel {
                          final Boolean includeInteractors,
                          final String analysisToken,
                          final String resource,
+                         final Boolean coverage,
                          final String fireworksProfile) {
         this.speciesId = speciesId;
         this.selected = selected;
@@ -43,6 +45,7 @@ public class ImageTabPanel extends FlowPanel {
         this.includeInteractors = includeInteractors;
         this.analysisToken = analysisToken;
         this.resource = resource;
+        this.coverage = coverage;
         this.fireworksProfile = fireworksProfile;
 
         // Initialise the panel with a loading animation
@@ -130,6 +133,7 @@ public class ImageTabPanel extends FlowPanel {
             if (analysisToken != null && !analysisToken.isEmpty()) {
                 params.add("token=" + analysisToken);
                 params.add("resource=" + resource);
+                if(coverage) params.add("coverage=" + coverage);
             }
 
             String paramsStr = "?" + params.stream().collect(Collectors.joining("&"));
