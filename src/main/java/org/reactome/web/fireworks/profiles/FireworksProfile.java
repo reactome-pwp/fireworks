@@ -83,7 +83,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.nodeEnrichment.getColor(p/THRESHOLD);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return nodeBaseGradient.getColor(p/filter);
             } else {
                 return this.profile.getNode().getHit();
@@ -107,7 +107,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.nodeExpression.getColor(expression, min, max);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return nodeBaseGradient.getColor(p/filter);
             } else{
                 return this.profile.getNode().getHit();
@@ -125,7 +125,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.nodeRegulationColorMap.getColor((int) expression);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return nodeBaseGradient.getColor(p/filter);
             } else{
                 return this.profile.getNode().getHit();
@@ -168,7 +168,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.edgeEnrichment.getColor(p/THRESHOLD);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return edgeBaseGradient.getColor(p/filter);
             } else {
                 return this.profile.getEdge().getHit();
@@ -188,7 +188,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.edgeExpression.getColor(expression, min, max);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return edgeBaseGradient.getColor(p/filter);
             } else{
                 return this.profile.getEdge().getHit();
@@ -206,7 +206,7 @@ public final class FireworksProfile {
         if (filter > THRESHOLD) {
             if (p <= THRESHOLD) {
                 return this.edgeRegulationColorMap.getColor((int) expression);
-            } else if (p <= filter) {
+            } else if (p <= filter && filter != 1.0) {
                 return edgeBaseGradient.getColor(p/filter);
             } else{
                 return this.profile.getEdge().getHit();
