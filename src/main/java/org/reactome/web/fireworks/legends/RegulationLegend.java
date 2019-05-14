@@ -25,8 +25,8 @@ public class RegulationLegend extends LegendPanel implements AnalysisPerformedHa
         NodeHoverHandler, NodeHoverResetHandler, NodeSelectedHandler, NodeSelectedResetHandler,
         ExpressionColumnChangedHandler, ProfileChangedHandler, MouseMoveHandler {
 
-    private static String TOP_LABEL  = "Up regulated";
-    private static String BOTTOM_LABEL = "Down regulated";
+    private static String TOP_LABEL  = "Up-regulated";
+    private static String BOTTOM_LABEL = "Down-regulated";
 
     private static String[] LABELS = {  "Significantly up regulated",
                                         "Non significantly up regulated",
