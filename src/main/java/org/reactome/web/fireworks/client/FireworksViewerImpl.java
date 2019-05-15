@@ -67,7 +67,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     private String token;
 
-    private ResultFilter filter;
+    private ResultFilter filter = new ResultFilter();
 
     private boolean forceFireworksDraw = true;
 
