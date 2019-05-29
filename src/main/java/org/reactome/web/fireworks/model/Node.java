@@ -30,6 +30,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     private double angle;
     private double currentSize;
     private double originalSize;
+    private boolean disease;
 
     private boolean insideFilter;
 
@@ -54,6 +55,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
         this.name = raw.get("name").isString().stringValue();
         this.ratio = raw.get("ratio").isNumber().doubleValue();
         this.angle = raw.get("angle").isNumber().doubleValue();
+        this.disease = raw.get("disease") != null && raw.get("disease").isBoolean().booleanValue();
         this.currentSize = this.originalSize = (ratio + 0.025) * 15;
         this.currentPosition = this.originalPosition = new Coordinate(raw.get("x").isNumber().doubleValue(), raw.get("y").isNumber().doubleValue());
         initStatistics(); //Colour is set in initStatistics method
@@ -454,7 +456,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 inside = false;
             } else if (pValue != null && pValue < statistics.getpValue() ) {
                 inside = false;
-            } else if (!includeDisease && false) { //TODO change this when disease information is available in the node
+            } else if (!includeDisease && disease) {
                 inside = false;
             } else if ((min != null && statistics.getTotal() < min) || (max != null && statistics.getTotal() > max)) {
                 inside = false;
