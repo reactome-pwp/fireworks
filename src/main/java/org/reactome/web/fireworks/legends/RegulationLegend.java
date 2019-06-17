@@ -1,12 +1,11 @@
 package org.reactome.web.fireworks.legends;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.CanvasGradient;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.InlineLabel;
 import org.reactome.web.analysis.client.model.EntityStatistics;
 import org.reactome.web.analysis.client.model.ExpressionSummary;
@@ -14,15 +13,32 @@ import org.reactome.web.fireworks.events.*;
 import org.reactome.web.fireworks.handlers.*;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.profiles.FireworksColours;
-import org.reactome.web.fireworks.profiles.FireworksProfile;
-import org.reactome.web.fireworks.util.gradient.ThreeColorGradient;
+import org.reactome.web.fireworks.util.ColorMap;
+
+import java.util.Map;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
-public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHandler, AnalysisResetHandler,
+public class RegulationLegend extends LegendPanel implements AnalysisPerformedHandler, AnalysisResetHandler,
         NodeHoverHandler, NodeHoverResetHandler, NodeSelectedHandler, NodeSelectedResetHandler,
-        ExpressionColumnChangedHandler, ProfileChangedHandler {
+        ExpressionColumnChangedHandler, ProfileChangedHandler, MouseMoveHandler {
+
+    private static String TOP_LABEL  = "Up-regulated";
+    private static String BOTTOM_LABEL = "Down-regulated";
+
+    private static String[] LABELS = {  "Significantly up regulated",
+                                        "Non significantly up regulated",
+                                        "Not found",
+                                        "Non significantly down regulated",
+                                        "Significantly down regulated"};
+
+    private static String[] SYMBOLS = { "\u25BC\u25BC",
+                                        "\u25BC",
+                                        "-",
+                                        "\u25B2",
+                                        "\u25B2\u25B2"};
 
     private Canvas gradient;
     private Canvas flag;
@@ -36,28 +52,30 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
     private InlineLabel topLabel;
     private InlineLabel bottomLabel;
 
-    public ExpressionLegend(EventBus eventBus) {
+    private int hoveredScaleIndex;
+
+    public RegulationLegend(EventBus eventBus) {
         super(eventBus);
         this.gradient = createCanvas(30, 200);
         this.flag = createCanvas(50, 210);
+        this.flag.addMouseMoveHandler(this);
+        this.flag.setTitle(LABELS[hoveredScaleIndex]);
 
         //Setting the legend style
         addStyleName(RESOURCES.getCSS().expressionLegend());
 
-        fillGradient();
+        fillPalette();
 
         this.topLabel = new InlineLabel("");
-        this.topLabel.getElement().getStyle().setWidth(100, Style.Unit.PCT);
-        this.topLabel.getElement().getStyle().setTextAlign(Style.TextAlign.CENTER);
-        this.add(this.topLabel, 0, 5);
+        this.topLabel.setStyleName(RESOURCES.getCSS().regulationLabel());
+        this.add(this.topLabel, 5, 3);
 
         this.add(this.gradient, 10, 25);
         this.add(this.flag, 0, 20);
 
         this.bottomLabel = new InlineLabel("");
-        this.bottomLabel.getElement().getStyle().setWidth(100, Style.Unit.PCT);
-        this.bottomLabel.getElement().getStyle().setTextAlign(Style.TextAlign.CENTER);
-        this.add(this.bottomLabel, 0, 230);
+        this.bottomLabel.setStyleName(RESOURCES.getCSS().regulationLabel());
+        this.add(this.bottomLabel, 5, 230);
 
         initHandlers();
 
@@ -69,6 +87,12 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
         canvas.setCoordinateSpaceWidth(width);
         canvas.setCoordinateSpaceHeight(height);
         canvas.setPixelSize(width, height);
+
+        //Set text properties once
+        Context2d ctx = canvas.getContext2d();
+        ctx.setFont("bold 13px Arial");
+        ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE);
+        ctx.setTextAlign(Context2d.TextAlign.CENTER);
         return canvas;
     }
 
@@ -84,15 +108,13 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
     @Override
     public void onAnalysisPerformed(AnalysisPerformedEvent e) {
         switch (e.getAnalysisType()){
-            case EXPRESSION:
-            case GSA_STATISTICS:
-            case GSVA:
+            case GSA_REGULATION:
                 ExpressionSummary es = e.getExpressionSummary();
                 if(es!=null){
                     this.min = es.getMin();
                     this.max = es.getMax();
-                    this.topLabel.setText( NumberFormat.getFormat("#.##E0").format(max) );
-                    this.bottomLabel.setText( NumberFormat.getFormat("#.##E0").format(min) );
+                    this.topLabel.setText(TOP_LABEL);
+                    this.bottomLabel.setText(BOTTOM_LABEL);
                 }
                 setVisible(true);
                 break;
@@ -110,6 +132,17 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
     public void onExpressionColumnChanged(ExpressionColumnChangedEvent e) {
         this.column = e.getColumn();
         draw();
+    }
+
+    @Override
+    public void onMouseMove(MouseMoveEvent event) {
+        int y = event.getRelativeY(gradient.getElement());
+        int stepHeight = 40;
+        int scaleIndex = (y / stepHeight);
+        if (hoveredScaleIndex != scaleIndex) {
+            flag.setTitle(LABELS[scaleIndex]);
+            hoveredScaleIndex = scaleIndex;
+        }
     }
 
     @Override
@@ -136,7 +169,7 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                fillGradient();
+                fillPalette();
                 draw();
             }
         });
@@ -148,22 +181,31 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
         this.draw();
     }
 
-    private void fillGradient(){
-        FireworksProfile profile = FireworksColours.PROFILE;
+    private void fillPalette() {
+        Map<Integer,String> colorMap = FireworksColours.PROFILE.nodeRegulationColorMap.getPalette();
+
         Context2d ctx = this.gradient.getContext2d();
-        CanvasGradient grd = ctx.createLinearGradient(0, 0, 30, 200);
-
-        grd.addColorStop(0, profile.getNodeExpressionColour(0));
-        grd.addColorStop(0.5,profile.getNodeExpressionColour(0.5));
-        grd.addColorStop(1, profile.getNodeExpressionColour(1));
-
         ctx.clearRect(0, 0, this.gradient.getCoordinateSpaceWidth(), this.gradient.getCoordinateSpaceHeight());
-        ctx.setFillStyle(grd);
-        ctx.beginPath();
-        ctx.fillRect(0, 0, 30, 200);
-        ctx.closePath();
+        double height = this.gradient.getCoordinateSpaceHeight() / (double) colorMap.size();
+
+        int i = 0;
+        for (Integer key : colorMap.keySet()) {
+            ctx.setFillStyle(colorMap.get(key));
+            ctx.beginPath();
+            ctx.fillRect(0, i * height, 30, height);
+            ctx.closePath();
+
+            // Labels
+            ctx.setShadowColor("rgba(0,0,0,0.5)");
+            ctx.setShadowBlur(4);
+            ctx.setFillStyle("#FFFFFF");
+            ctx.fillText(SYMBOLS[key + 2], 15, i * height + height/2.0);
+
+            i++;
+        }
     }
 
+    @SuppressWarnings("Duplicates")
     private void draw(){
         if(!this.isVisible()) return;
 
@@ -176,7 +218,7 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
                 if(statistics.getExp()!=null) {
                     String colour = FireworksColours.PROFILE.getNodeHighlightColour();
                     double expression = statistics.getExp().get(this.column);
-                    double p = ThreeColorGradient.getPercentage(expression, this.min, this.max);
+                    double p = ColorMap.getPercentage(expression, this.min, this.max);
                     int y = (int) Math.round(200 * p) + 5;
                     ctx.setFillStyle(colour);
                     ctx.setStrokeStyle(colour);
@@ -189,11 +231,11 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
                     ctx.stroke();
                     ctx.closePath();
 
-                    ctx.beginPath();
-                    ctx.moveTo(10, y);
-                    ctx.lineTo(40, y);
-                    ctx.stroke();
-                    ctx.closePath();
+//                    ctx.beginPath();
+//                    ctx.moveTo(10, y);
+//                    ctx.lineTo(40, y);
+//                    ctx.stroke();
+//                    ctx.closePath();
                 }
             }
         }
@@ -204,7 +246,7 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
                 if(statistics.getExp()!=null) {
                     String colour = FireworksColours.PROFILE.getNodeSelectionColour();
                     double expression = statistics.getExp().get(this.column);
-                    double p = ThreeColorGradient.getPercentage(expression, this.min, this.max);
+                    double p = ColorMap.getPercentage(expression, this.min, this.max);
                     int y = (int) Math.round(200 * p) + 5;
                     ctx.setFillStyle(colour);
                     ctx.setStrokeStyle(colour);
@@ -217,11 +259,11 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
                     ctx.stroke();
                     ctx.closePath();
 
-                    ctx.beginPath();
-                    ctx.moveTo(10, y);
-                    ctx.lineTo(40, y);
-                    ctx.stroke();
-                    ctx.closePath();
+//                    ctx.beginPath();
+//                    ctx.moveTo(10, y);
+//                    ctx.lineTo(40, y);
+//                    ctx.stroke();
+//                    ctx.closePath();
                 }
             }
         }
@@ -237,5 +279,4 @@ public class ExpressionLegend extends LegendPanel implements AnalysisPerformedHa
         this.eventBus.addHandler(ExpressionColumnChangedEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
     }
-
 }

@@ -30,6 +30,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
     private double angle;
     private double currentSize;
     private double originalSize;
+    private boolean disease;
 
     private boolean insideFilter;
 
@@ -54,6 +55,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
         this.name = raw.get("name").isString().stringValue();
         this.ratio = raw.get("ratio").isNumber().doubleValue();
         this.angle = raw.get("angle").isNumber().doubleValue();
+        this.disease = raw.get("disease") != null && raw.get("disease").isBoolean().booleanValue();
         this.currentSize = this.originalSize = (ratio + 0.025) * 15;
         this.currentPosition = this.originalPosition = new Coordinate(raw.get("x").isNumber().doubleValue(), raw.get("y").isNumber().doubleValue());
         initStatistics(); //Colour is set in initStatistics method
@@ -347,7 +349,6 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
             case EXPRESSION:
             case GSA_STATISTICS:
             case GSVA:
-            case GSA_REGULATION: //TODO:
                 List<Double> exp = this.statistics.getExp();
                 if(exp!=null){
                     double min = result.getExpressionSummary().getMin();
@@ -361,6 +362,21 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                     for (Edge edge : this.edgesTo) edge.setExpColours(edgeExpColours);
                 }
                 break;
+            case GSA_REGULATION:
+                List<Double> reg = this.statistics.getExp();
+                if(reg!=null){
+                    double min = result.getExpressionSummary().getMin();
+                    double max = result.getExpressionSummary().getMax();
+                    this.expColours = new ArrayList<>();
+                    List<String> edgeExpColours = new ArrayList<>();
+                    for (Double v : reg) {
+                        this.expColours.add(FireworksColours.PROFILE.getNodeRegulationColour(statistics.getpValue(), v, fPvalue));
+                        edgeExpColours.add(FireworksColours.PROFILE.getEdgeRegulationColour(statistics.getpValue(), v, fPvalue));
+                    }
+                    for (Edge edge : this.edgesTo) edge.setExpColours(edgeExpColours);
+                }
+                break;
+
             case NONE:
             default:
                 //Nothing here
@@ -440,7 +456,7 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
                 inside = false;
             } else if (pValue != null && pValue < statistics.getpValue() ) {
                 inside = false;
-            } else if (!includeDisease && false) { //TODO change this when disease information is available in the node
+            } else if (!includeDisease && disease) {
                 inside = false;
             } else if ((min != null && statistics.getTotal() < min) || (max != null && statistics.getTotal() > max)) {
                 inside = false;
