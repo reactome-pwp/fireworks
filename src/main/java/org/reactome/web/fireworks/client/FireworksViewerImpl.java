@@ -754,9 +754,6 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         url.append("&color=").append(FireworksColours.PROFILE.getName().toUpperCase());
         if (token != null && !token.isEmpty()) {
             url.append("&analysis=").append(token);
-        }
-
-        if (filter != null) {
             url.append("&").append(filter);
         }
 
