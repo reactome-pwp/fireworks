@@ -34,6 +34,7 @@ import java.util.Set;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResize,
         FireworksVisibleAreaChangedHandler, FireworksZoomHandler,

@@ -44,6 +44,7 @@ import java.util.Set;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
 class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler, MouseWheelHandler,
