@@ -170,11 +170,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         this.eventBus.addHandler(AnalysisResetEvent.TYPE, this);
     }
 
-
-//    public HandlerRegistration addDoubleClickHandler(DoubleClickHandler handler){
-//        return getTopCanvas().addDoubleClickHandler(handler);
-//    }
-
     public HandlerRegistration addClickHandler(ClickHandler handler) {
         return getTopCanvas().addClickHandler(handler);
     }
@@ -446,16 +441,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         this.thumbnail.flagNode(nodes, edges);
     }
 
-    private void flagNode(Node node) {
-
-
-
-    }
-
-    private void flagEdge(Edge edge) {
-        Context2d ctx = this.nodesFlagged.getContext2d();
-    }
-
     public void highlightNode(Node node) {
         cleanHighlightCanvas();
         if (node == null) return;
@@ -659,17 +644,17 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         }
 
         Context2d ctx = this.textAllNodes.getContext2d();
-        ctx.setFont(fontSize + "pt Arial"); //ctx.setFont(fontSize + "pt Calibri");
+        ctx.setFont(fontSize + "pt Arial");
         ctx.setFillStyle("rgba(0,0,0, " + fontOpacity + ")");
 
         fontSize = fontSize > INITIAL_FONT ? fontSize : INITIAL_FONT;
 
         ctx = this.textSelection.getContext2d();
-        ctx.setFont(fontSize + "pt Arial"); //ctx.setFont(fontSize + "pt Calibri");
+        ctx.setFont(fontSize + "pt Arial");
         ctx.setFillStyle("#0000FF");
 
         ctx = this.textTLP.getContext2d();
-        ctx.setFont(fontSize + "pt Arial"); //ctx.setFont(fontSize + "pt Calibri");
+        ctx.setFont(fontSize + "pt Arial");
         ctx.setFillStyle("#000000");
     }
 }
