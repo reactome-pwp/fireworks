@@ -8,6 +8,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.*;
 import org.reactome.web.fireworks.events.ProfileChangedEvent;
+import org.reactome.web.fireworks.handlers.ProfileChangedHandler;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.profiles.model.Profile;
 
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
-public class ProfilesTabPanel extends Composite implements ChangeHandler {
+public class ProfilesTabPanel extends Composite implements ChangeHandler, ProfileChangedHandler {
     private EventBus eventBus;
     private ListBox colourProfiles;
 
@@ -50,6 +51,14 @@ public class ProfilesTabPanel extends Composite implements ChangeHandler {
         }
     }
 
+    @Override
+    public void onProfileChanged(ProfileChangedEvent event) {
+        if(!event.getSource().equals(this)) {
+            Profile profile = event.getProfile();
+            FireworksColours.setProfile(event.getProfile());
+            setSelection(colourProfiles, profile.getName());
+        }
+    }
 
     private Widget getProfilesWidget(String title, ListBox profileListBox, List<String> profileNames){
         profileListBox.setMultipleSelect(false);
@@ -79,6 +88,7 @@ public class ProfilesTabPanel extends Composite implements ChangeHandler {
 
     private void initHandlers(){
         colourProfiles.addChangeHandler(this);
+        this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
     }
 
 

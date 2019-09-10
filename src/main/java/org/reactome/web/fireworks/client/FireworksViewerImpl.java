@@ -28,6 +28,7 @@ import org.reactome.web.fireworks.model.Graph;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.model.factory.ModelFactory;
 import org.reactome.web.fireworks.profiles.FireworksColours;
+import org.reactome.web.fireworks.profiles.model.Profile;
 import org.reactome.web.fireworks.search.events.SuggestionHoveredEvent;
 import org.reactome.web.fireworks.search.events.SuggestionSelectedEvent;
 import org.reactome.web.fireworks.search.handlers.SuggestionHoveredHandler;
@@ -836,5 +837,19 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
             this.eventBus.fireEventFromSource(new NodeFlaggedEvent(term, includeInteractors, this.nodesToFlag), this);
         }
         forceFireworksDraw = true;
+    }
+
+    @Override
+    public List<String> getAvailableColorProfiles() {
+        return FireworksColours.ProfileType.getProfiles();
+    }
+
+    @Override
+    public void setColorProfile(String colorProfile) {
+        if (!FireworksColours.getSelectedProfileName().equals(colorProfile)) {
+            Profile profile = FireworksColours.ProfileType.getByName(colorProfile).getProfile();
+            FireworksColours.setProfile(profile);
+            eventBus.fireEventFromSource(new ProfileChangedEvent(profile), this);
+        }
     }
 }

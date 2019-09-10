@@ -34,6 +34,6 @@ public class ProfileChangedEvent extends GwtEvent<ProfileChangedHandler> {
     public String toString() {
         return "ProfileChangedEvent{" +
                 "profile=" + profile.getName() +
-                '}';
+                '}' +profile.hashCode();
     }
 }

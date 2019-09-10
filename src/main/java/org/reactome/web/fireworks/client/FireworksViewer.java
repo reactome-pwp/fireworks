@@ -8,6 +8,8 @@ import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.fireworks.handlers.*;
 import org.reactome.web.fireworks.model.Node;
 
+import java.util.List;
+
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
@@ -69,4 +71,8 @@ public interface FireworksViewer extends IsWidget, HasHandlers, RequiresResize {
     void showAll();
 
     void setVisible(boolean visible);
+
+    List<String> getAvailableColorProfiles();
+
+    void setColorProfile(String colorProfile);
 }
