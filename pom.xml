@@ -21,15 +21,21 @@
 
     <developers>
         <developer>
-            <id>fabregat</id>
-            <name>Antonio Fabregat</name>
-            <email>fabregat@ebi.ac.uk</email>
+            <id>gviteri</id>
+            <name>Guilherme Viteri</name>
+            <email>gviteri@ebi.ac.uk</email>
             <organization>http://www.ebi.ac.uk/</organization>
         </developer>
         <developer>
             <id>ksidis</id>
             <name>Kostas Sidiropoulos</name>
             <email>ksidiro@ebi.ac.uk</email>
+            <organization>http://www.ebi.ac.uk/</organization>
+        </developer>
+        <developer>
+            <id>fabregat</id>
+            <name>Antonio Fabregat</name>
+            <email>fabregat@ebi.ac.uk</email>
             <organization>http://www.ebi.ac.uk/</organization>
         </developer>
     </developers>
@@ -43,7 +49,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
-        <reactome.web.model>2.1.18-SNAPSHOT</reactome.web.model>
+        <reactome.web.model>2.1.20</reactome.web.model>
         <reactome.web.analysis-client>1.5.1</reactome.web.analysis-client>
         <reactome.web.quadtree>1.2.0</reactome.web.quadtree>
         <reactome.web.scroller>1.0.2</reactome.web.scroller>
