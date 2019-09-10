@@ -140,6 +140,8 @@ public class WidgetTest implements EntryPoint {
         RootLayoutPanel.get().add(slp);
 
         fireworks.flagItems("FYN", false);
+        fireworks.setColorProfile("Barium Lithum");
+
 //        fireworks.flagNodes("Reactions and Boxes Mixed", getPathways(TestSource.SOURCE.reactionsAndBoxesMixed().getText()));
 
     }
