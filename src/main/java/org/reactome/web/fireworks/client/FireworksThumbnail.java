@@ -68,6 +68,7 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
 
     public void clearFlags(){
         this.cleanCanvas(this.flag);
+        this.drawThumbnail();
     }
 
     public void clearHighlights(){
@@ -235,7 +236,7 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
                 case EXPRESSION:
                 case GSA_STATISTICS:
                 case GSVA:
-                case GSA_REGULATION: //TODO
+                case GSA_REGULATION:
                     ctx.setStrokeStyle(edge.getExpressionColor(column));
                     edge.drawThumbnail(ctx, this.factor);
                     break;
