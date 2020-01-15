@@ -69,6 +69,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     private String token;
 
+    private boolean coverage;
+
     private ResultFilter filter = new ResultFilter();
 
     private boolean forceFireworksDraw = true;
@@ -249,6 +251,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     public void onAnalysisReset() {
         this.token = null;
         this.filter = null;
+        this.coverage = false;
         this.data.resetPathwaysAnalysisResult();
         this.forceFireworksDraw = true;
     }
@@ -322,6 +325,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onOverlayTypeChanged(OverlayTypeChangedEvent e) {
+        this.coverage = e.isCoverage();
         doUpdate(true);
     }
 
@@ -627,7 +631,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void resetAnalysis() {
-        this.token = null; this.filter=null;
+        this.token = null; this.filter=null; this.coverage = false;
         eventBus.fireEventFromSource(new AnalysisResetEvent(), this);
     }
 
@@ -757,6 +761,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         if (token != null && !token.isEmpty()) {
             url.append("&analysis=").append(token);
             url.append("&").append(filter);
+            if (coverage) url.append("&coverage=true");
         }
 
         if (node != null) {
