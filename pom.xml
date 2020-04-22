@@ -7,7 +7,7 @@
     <groupId>org.reactome.web</groupId>
     <artifactId>fireworks</artifactId>
     <packaging>jar</packaging>
-    <version>1.8.7-SNAPSHOT</version>
+    <version>1.8.7</version>
     <name>Reactome Fireworks Viewer</name>
 
     <description>
@@ -50,7 +50,7 @@
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
         <reactome.web.model>2.1.20</reactome.web.model>
-        <reactome.web.analysis-client>1.5.2-SNAPSHOT</reactome.web.analysis-client>
+        <reactome.web.analysis-client>1.5.2</reactome.web.analysis-client>
         <reactome.web.quadtree>1.2.0</reactome.web.quadtree>
         <reactome.web.scroller>1.0.2</reactome.web.scroller>
 
