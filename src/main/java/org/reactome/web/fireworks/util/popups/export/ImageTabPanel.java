@@ -21,6 +21,7 @@ public class ImageTabPanel extends FlowPanel {
     private final String flagged;
     private final Boolean includeInteractors;
     private final String analysisToken;
+    private final Integer expColumn;
     private final String resource;
     private final Boolean coverage;
     private final String fireworksProfile;
@@ -36,6 +37,7 @@ public class ImageTabPanel extends FlowPanel {
                          final String flagged,
                          final Boolean includeInteractors,
                          final String analysisToken,
+                         final Integer expColumn,
                          final String resource,
                          final Boolean coverage,
                          final String fireworksProfile) {
@@ -44,6 +46,7 @@ public class ImageTabPanel extends FlowPanel {
         this.flagged = flagged;
         this.includeInteractors = includeInteractors;
         this.analysisToken = analysisToken;
+        this.expColumn = expColumn;
         this.resource = resource;
         this.coverage = coverage;
         this.fireworksProfile = fireworksProfile;
@@ -133,7 +136,8 @@ public class ImageTabPanel extends FlowPanel {
             if (analysisToken != null && !analysisToken.isEmpty()) {
                 params.add("token=" + analysisToken);
                 params.add("resource=" + resource);
-                if(coverage) params.add("coverage=" + coverage);
+                if (expColumn != null && type != ImageDownloadType.GIF) params.add("expColumn=" + expColumn);
+                if (coverage) params.add("coverage=" + coverage);
             }
 
             String paramsStr = "?" + params.stream().collect(Collectors.joining("&"));

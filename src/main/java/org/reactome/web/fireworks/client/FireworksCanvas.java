@@ -372,7 +372,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         this.cleanCanvas(this.textTLP);
     }
 
-    public void showExportDialog(final Node selected, final String flagTerm, final Boolean includeInteractors, final String analysisToken, final String resource) {
+    public void showExportDialog(final Node selected, final String flagTerm, final Boolean includeInteractors, final String analysisToken, final String resource, Integer expColumn) {
         final Context2d ctx = this.canvases.get(this.canvases.size() - 1).getContext2d();
         //This is silly but gives some visual feedback of the picture taking :D
         (new Timer() {
@@ -402,6 +402,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
                             flagTerm,
                             includeInteractors,
                             analysisToken,
+                            expColumn,
                             resource,
                             EnrichmentLegend.COVERAGE,
                             snapshot

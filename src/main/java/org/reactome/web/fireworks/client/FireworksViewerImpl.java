@@ -69,6 +69,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     private String token;
 
+    private Integer expColumn;
+
     private boolean coverage;
 
     private ResultFilter filter = new ResultFilter();
@@ -260,6 +262,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     public void onExpressionColumnChanged(ExpressionColumnChangedEvent e) {
         this.canvases.setColumn(e.getColumn()); //First the column needs to be set in the canvases
         this.forceFireworksDraw = true;
+        this.expColumn = e.getColumn();
     }
 
     @Override
@@ -301,7 +304,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
 
     @Override
     public void onCanvasExportRequested(CanvasExportRequestedEvent event) {
-        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, filter.getResource());
+        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, filter.getResource(), expColumn);
     }
 
     @Override

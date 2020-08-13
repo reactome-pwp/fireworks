@@ -33,11 +33,12 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
     private final String flagged;
     private final Boolean includeInteractors;
     private final String analysisToken;
+    private final Integer expColumn;
     private final String resource;
     private final Boolean coverage;
     private final Image snapshot;
 
-    public ExportDialog(final Long speciesId, final String selected, final Long selectedDbId, final String flagged, final Boolean includeInteractors, final String analysisToken, final String resource, Boolean coverage, final Image snapshot){
+    public ExportDialog(final Long speciesId, final String selected, final Long selectedDbId, final String flagged, final Boolean includeInteractors, final String analysisToken, final Integer expColumn, final String resource, Boolean coverage, final Image snapshot){
         super();
         this.setAutoHideEnabled(true);
         this.setModal(true);
@@ -54,6 +55,7 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
         this.analysisToken = analysisToken;
         this.resource = resource;
         this.coverage = coverage;
+        this.expColumn = expColumn;
 
         // Initialise the dialog
         initUI();
@@ -136,7 +138,7 @@ public class ExportDialog extends PopupPanel implements ClickHandler {
         this.tabContainer.setStyleName(RESOURCES.getCSS().tabContainer());
 
         this.tabContainer.add(new SnapshotTabPanel(snapshot));
-        this.tabContainer.add(new ImageTabPanel(speciesId, selected, flagged, includeInteractors, analysisToken, resource, coverage, FireworksColours.getSelectedProfileName()));
+        this.tabContainer.add(new ImageTabPanel(speciesId, selected, flagged, includeInteractors, analysisToken, expColumn, resource, coverage, FireworksColours.getSelectedProfileName()));
         this.tabContainer.add(new ContentTabPanel(selected, selectedDbId));
 
         this.tabContainer.showWidget(0);
