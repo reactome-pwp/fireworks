@@ -47,7 +47,7 @@ import java.util.Set;
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  * @author Kostas Sidiropoulos <ksidiro@ebi.ac.uk>
  */
-class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
+public class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler, MouseWheelHandler,
         TouchStartHandler, TouchEndHandler, TouchMoveHandler, TouchCancelHandler,
         FireworksVisibleAreaChangedHandler, FireworksZoomHandler, ClickHandler, /*DoubleClickHandler,*/
@@ -89,8 +89,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     private Set<Node> nodesToFlag = null;
     private Set<Edge> edgesToFlag = null;
 
-    private String flagTerm;
-    private Boolean includeInteractors = false;
+    protected String flagTerm;
+    protected Boolean includeInteractors = false;
 
     FireworksViewerImpl(String json) {
         this.eventBus = new FireworksEventBus();
@@ -357,28 +357,11 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         }
     }
 
-    private void findPathwaysToFlag(String identifier, Boolean includeInteractors) {
+    protected void findPathwaysToFlag(String identifier, Boolean includeInteractors) {
         Flagger.findPathwaysToFlag(identifier, data.getSpeciesName(), includeInteractors, new Flagger.PathwaysToFlagHandler() {
             @Override
             public void onPathwaysToFlag(List<String> llps, List<String> interactsWith) {
-                Set<Node> nodesToFlag = new HashSet<>();
-                add(llps, nodesToFlag);
-                if(includeInteractors) add(interactsWith, nodesToFlag);
-
-                Set<Edge> edgesToFlag = new HashSet<>();
-                nodesToFlag.forEach(n -> edgesToFlag.addAll(n.getEdgesTo()));
-
-                setFlaggedElements(identifier, includeInteractors, nodesToFlag, edgesToFlag);
-            }
-
-            private void add(List<String> list, Set<Node> nodesToFlag){
-                for (String pathway : list) {
-                    Node node = data.getNode(pathway);
-                    if (node != null){
-                        nodesToFlag.add(node);
-                        nodesToFlag.addAll(node.getAncestors());
-                    }
-                }
+                flagPathways(llps, interactsWith);
             }
 
             @Override
@@ -386,6 +369,27 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
                 //TODO: Nothing to flag
             }
         });
+    }
+    
+    protected void flagPathways(List<String> llps, List<String> interactsWith) {
+    	Set<Node> nodesToFlag = new HashSet<>();
+        addNodesToFlag(llps, nodesToFlag);
+        if(includeInteractors) addNodesToFlag(interactsWith, nodesToFlag);
+
+        Set<Edge> edgesToFlag = new HashSet<>();
+        nodesToFlag.forEach(n -> edgesToFlag.addAll(n.getEdgesTo()));
+
+        setFlaggedElements(flagTerm, includeInteractors, nodesToFlag, edgesToFlag);
+    }
+    
+    protected void addNodesToFlag(List<String> list, Set<Node> nodesToFlag){
+        for (String pathway : list) {
+            Node node = data.getNode(pathway);
+            if (node != null){
+                nodesToFlag.add(node);
+                nodesToFlag.addAll(node.getAncestors());
+            }
+        }
     }
 
     @Override
@@ -832,7 +836,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         }
     }
 
-    private void setFlaggedElements(String term, Boolean includeInteractors, Set<Node> nodesToFlag, Set<Edge> edgesToFlag) {
+    protected void setFlaggedElements(String term, Boolean includeInteractors, Set<Node> nodesToFlag, Set<Edge> edgesToFlag) {
         if (nodesToFlag == null || nodesToFlag.isEmpty()) {
             this.nodesToFlag = new HashSet<>();
             this.edgesToFlag = new HashSet<>();
