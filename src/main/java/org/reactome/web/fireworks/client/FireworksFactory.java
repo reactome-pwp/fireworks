@@ -24,11 +24,17 @@ public abstract class FireworksFactory {
     public static boolean RESPOND_TO_SEARCH_SHORTCUT = true; // Listen to ctrl (or cmd) + F
                                                              // and expand the search input
 
+    private static FireworksViewerCreator creator = json -> new FireworksViewerImpl(json);
+    
+    public static void setFireworksViewerCreator(FireworksViewerCreator creator1) {
+    	creator = creator1;
+    }
+    
     public static FireworksViewer createFireworksViewer(TextResource json){
-        return new FireworksViewerImpl(json.getText());
+        return creator.createFireworksView(json.getText());
     }
 
     public static FireworksViewer createFireworksViewer(String json){
-        return new FireworksViewerImpl(json);
+        return creator.createFireworksView(json);
     }
 }

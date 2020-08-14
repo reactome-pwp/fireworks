@@ -92,7 +92,7 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
     protected String flagTerm;
     protected Boolean includeInteractors = false;
 
-    FireworksViewerImpl(String json) {
+    public FireworksViewerImpl(String json) {
         this.eventBus = new FireworksEventBus();
         try {
             Graph graph = ModelFactory.getGraph(json);
