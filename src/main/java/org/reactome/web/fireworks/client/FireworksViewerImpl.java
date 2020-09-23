@@ -54,7 +54,7 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         AnalysisResetHandler, ExpressionColumnChangedHandler, OverlayTypeChangedHandler,
         ControlActionHandler, ProfileChangedHandler,
         SuggestionSelectedHandler, SuggestionHoveredHandler,
-        IllustrationSelectedHandler, CanvasExportRequestedHandler,
+        CanvasExportRequestedHandler,
         KeyDownHandler, SearchFilterHandler, SearchResetHandler,
         SearchItemHoveredHandler, SearchItemSelectedHandler,
         NodeFlagRequestedHandler, NodeFlaggedResetHandler {
@@ -319,11 +319,6 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
     @Override
     public void onSearchItemSelected(SearchItemSelectedEvent event) {
         selectNode(event.getSelectedIdentifier());
-    }
-
-    @Override
-    public void onIllustrationSelected(IllustrationSelectedEvent event) {
-        this.canvases.setIllustration(event.getUrl());
     }
 
     @Override
@@ -732,7 +727,6 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
         this.eventBus.addHandler(ExpressionColumnChangedEvent.TYPE, this);
         this.eventBus.addHandler(FireworksVisibleAreaChangedEvent.TYPE, this);
         this.eventBus.addHandler(FireworksZoomEvent.TYPE, this);
-        this.eventBus.addHandler(IllustrationSelectedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlagRequestedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);

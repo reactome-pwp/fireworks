@@ -49,11 +49,13 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
     private Coordinate mouseDown = null;
     private Coordinate delta = null;
 
+    private int width;
+
     FireworksThumbnail(EventBus eventBus, Graph graph) {
         this.eventBus = eventBus;
         this.graph = graph;
         this.factor = HEIGHT / graph.getMaxY();
-        int width = (int) Math.ceil((graph.getMaxX() + 25) * factor);
+        this.width = (int) Math.ceil((graph.getMaxX() + 25) * factor);
 
         this.thumbnail = this.createCanvas(width, HEIGHT);
         this.flag = this.createCanvas(width, HEIGHT);
@@ -64,6 +66,10 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
         this.setStyle(width, HEIGHT);
         this.addHandlers();
         this.drawThumbnail();
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public void clearFlags(){

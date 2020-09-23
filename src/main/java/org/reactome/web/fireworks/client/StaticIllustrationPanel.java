@@ -6,7 +6,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -14,32 +13,44 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import org.reactome.web.fireworks.legends.ControlButton;
 
 /**
- * @author Antonio Fabregat <fabregat@ebi.ac.uk>
+ * This panel is displayed when the user selects one of the static illustrations (figures)
  */
-class IllustrationPanel extends AbsolutePanel implements RequiresResize, ClickHandler {
+public class StaticIllustrationPanel extends AbsolutePanel implements RequiresResize, ClickHandler {
 
     private ScrollPanel container;
+    private String url;
 
-    public IllustrationPanel(){
+    public StaticIllustrationPanel(){
         setStyleName(RESOURCES.getCSS().panelHidden());
         this.getElement().addClassName("pwp-FireworksCanvas");
         container = new ScrollPanel();
         container.setStyleName(RESOURCES.getCSS().container());
-        add(container);
     }
 
-    public void setUrl(String url) {
-        setStyleName(RESOURCES.getCSS().panelShown());
+    public void create(String url) {
+        this.url = url;
         this.getElement().addClassName("pwp-FireworksCanvas");
         container.clear();
         Image img = new Image(url);
         img.getElement().addClassName("pwp-FireworksCanvas");
         container.add(img);
+        add(container);
         add(new ControlButton("Close", RESOURCES.getCSS().close(), this));
         onResize();
     }
 
+    public void setPanelElements(String url){
+        this.clear();
+        create(url);
+    }
+
     @Override
+    public void clear() {
+        super.clear();
+        url = null;
+    }
+
+   @Override
     public void onClick(ClickEvent event) {
         reset();
     }
@@ -53,14 +64,7 @@ class IllustrationPanel extends AbsolutePanel implements RequiresResize, ClickHa
     public void reset(){
         setStyleName(RESOURCES.getCSS().panelHidden());
         this.getElement().addClassName("pwp-FireworksCanvas");
-        (new Timer() {
-            @Override
-            public void run() {
-                container.clear();
-            }
-        }).schedule(300);
     }
-
 
     public static Resources RESOURCES;
     static {
@@ -82,12 +86,12 @@ class IllustrationPanel extends AbsolutePanel implements RequiresResize, ClickHa
         ImageResource closeNormal();
     }
 
-    @CssResource.ImportedWithPrefix("fireworks-IllustrationsPanel")
+    @CssResource.ImportedWithPrefix("fireworks-StaticIllustrationsPanel")
     public interface ResourceCSS extends CssResource {
         /**
          * The path to the default CSS styles used by this resource.
          */
-        String CSS = "org/reactome/web/fireworks/client/IllustrationsPanel.css";
+        String CSS = "org/reactome/web/fireworks/client/StaticIllustrationsPanel.css";
 
         String panelHidden();
 

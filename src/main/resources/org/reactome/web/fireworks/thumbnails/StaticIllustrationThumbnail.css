@@ -1,0 +1,19 @@
+
+.mainStaticThumbnails {
+    position: absolute;
+    bottom: 0;
+    width: 130px;
+    height: 75px;
+    border: 1px solid grey;
+    background-color: white;
+}
+
+.mainStaticThumbnails img, .mainStaticThumbnails svg  {
+    width: 130px;
+    height: inherit;
+    background-color: white;
+}
+
+.mainStaticThumbnails:hover{
+    cursor: pointer !important;
+}

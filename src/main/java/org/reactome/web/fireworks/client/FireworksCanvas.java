@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
 import org.reactome.web.fireworks.controls.navigation.NavigationControlPanel;
 import org.reactome.web.fireworks.controls.settings.HideableContainerPanel;
 import org.reactome.web.fireworks.controls.settings.RightContainerPanel;
+import org.reactome.web.fireworks.controls.thumbnails.StaticIllustrationThumbnail;
 import org.reactome.web.fireworks.controls.top.LeftTopLauncherPanel;
 import org.reactome.web.fireworks.controls.top.RightTopLauncherPanel;
 import org.reactome.web.fireworks.events.*;
@@ -78,7 +79,7 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
     private ToolTipContainer tooltipContainer;
 
-    private IllustrationPanel illustration;
+    private StaticIllustrationPanel staticIllustrationPanel;
 
     private FireworksThumbnail thumbnail;
     private FireworksInfo info;
@@ -152,9 +153,9 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         //Settings panel
         rightContainerPanel.add(new HideableContainerPanel(eventBus));
 
-
-        //Illustration panel
-        this.add(this.illustration = new IllustrationPanel(), 0, 0);
+        // StaticIllustration panel - when clicking to open the image
+        this.add(this.staticIllustrationPanel = new StaticIllustrationPanel(), 0 , 0);
+        this.add(new StaticIllustrationThumbnail(eventBus, staticIllustrationPanel, thumbnail.getWidth()));
 
         this.initialiseHandlers();
     }
@@ -580,16 +581,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         this.tooltipContainer.setHeight(height);
         this.setFontParameters();
         this.eventBus.fireEventFromSource(new FireworksResizedEvent(width, height), this);
-    }
-
-    public void setIllustration(String url) {
-        this.illustration.setUrl(url);
-    }
-
-    public void resetIllustration() {
-        if (this.illustration != null) {
-            this.illustration.reset();
-        }
     }
 
     public void setColumn(int column) {
