@@ -85,11 +85,7 @@ public class StaticIllustrationThumbnail extends FlowPanel implements NodeOpened
             image.setAltText("Illustration for " + databaseObject.getDisplayName());
             image.addClickHandler(clickEvent -> {
                 staticIllustrationPanel.setPanelElements(url);
-                if (staticIllustrationPanel.getStyleName().contains(StaticIllustrationPanel.RESOURCES.getCSS().panelShown())) {
-                    staticIllustrationPanel.setStyleName(StaticIllustrationPanel.RESOURCES.getCSS().panelHidden());
-                } else {
-                    staticIllustrationPanel.setStyleName(StaticIllustrationPanel.RESOURCES.getCSS().panelShown());
-                }
+                staticIllustrationPanel.toggle();
             });
             mainStaticIllustrationFlowPanel.add(image);
             mainStaticIllustrationFlowPanel.setVisible(true);
@@ -100,7 +96,10 @@ public class StaticIllustrationThumbnail extends FlowPanel implements NodeOpened
 
     public void resetAllStaticIllustration() {
         diagramIllustrationURL = null;
-        if (staticIllustrationPanel != null) staticIllustrationPanel.clear();
+        if (staticIllustrationPanel != null) {
+            staticIllustrationPanel.clear();
+            staticIllustrationPanel.reset();
+        }
         if (mainStaticIllustrationFlowPanel != null ) remove(mainStaticIllustrationFlowPanel);
     }
 
