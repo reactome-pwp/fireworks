@@ -109,4 +109,8 @@ public class FireworksData {
             setPathwaysAnalysisResult(this.analysisResult, this.analysisFilter);
         }
     }
+
+    public SpeciesFilteredResult getAnalysisResult() {
+        return analysisResult;
+    }
 }

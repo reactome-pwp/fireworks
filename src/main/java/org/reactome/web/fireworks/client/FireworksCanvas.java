@@ -2,12 +2,14 @@ package org.reactome.web.fireworks.client;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RequiresResize;
 import org.reactome.web.fireworks.controls.navigation.NavigationControlPanel;
@@ -79,8 +81,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
     private ToolTipContainer tooltipContainer;
 
-    private StaticIllustrationPanel staticIllustrationPanel;
-
     private FireworksThumbnail thumbnail;
     private FireworksInfo info;
 
@@ -88,11 +88,14 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
     private Set<Node> drawnNodes = new HashSet<>();
 
+    private StaticIllustrationThumbnail staticIllustrationThumbnail;
+
     FireworksCanvas(EventBus eventBus, Graph graph) throws CanvasNotSupportedException {
         this.getElement().setClassName("pwp-FireworksCanvas");
         this.eventBus = eventBus;
         this.speciesId = graph.getSpeciesId();
         this.thumbnail = new FireworksThumbnail(eventBus, graph);
+        this.staticIllustrationThumbnail = new StaticIllustrationThumbnail(eventBus);
 
         int width = (int) Math.ceil(graph.getMaxX());
         int height = (int) Math.ceil(graph.getMaxY());
@@ -119,7 +122,10 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
             this.info = new FireworksInfo(eventBus);
             this.add(this.info);
         }
-        this.add(thumbnail);
+
+        //Thumbnails and static in the same container
+        this.add(createThumbnailsContainer());
+        this.add(staticIllustrationThumbnail.getStaticIllustrationPanel());
 
         //Control panel
         this.add(new NavigationControlPanel(eventBus));
@@ -152,10 +158,6 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
 
         //Settings panel
         rightContainerPanel.add(new HideableContainerPanel(eventBus));
-
-        // StaticIllustration panel - when clicking to open the image
-        this.add(this.staticIllustrationPanel = new StaticIllustrationPanel(), 0 , 0);
-        this.add(new StaticIllustrationThumbnail(eventBus, staticIllustrationPanel, thumbnail.getWidth()));
 
         this.initialiseHandlers();
     }
@@ -649,5 +651,20 @@ class FireworksCanvas extends AbsolutePanel implements HasHandlers, RequiresResi
         ctx = this.textTLP.getContext2d();
         ctx.setFont(fontSize + "pt Arial");
         ctx.setFillStyle("#000000");
+    }
+
+    private FlowPanel createThumbnailsContainer() {
+        FlowPanel thumbnailContainer = new FlowPanel();
+        thumbnailContainer.getElement().addClassName("pwp-ThumbnailContainer");
+        Style style = thumbnailContainer.getElement().getStyle();
+        style.setDisplay(Style.Display.FLEX);
+        style.setPosition(Style.Position.ABSOLUTE);
+        style.setBottom(0, Style.Unit.PX);
+        style.setProperty("alignItems", "center");
+
+        thumbnailContainer.add(this.thumbnail);
+        thumbnailContainer.add(this.staticIllustrationThumbnail);
+
+        return thumbnailContainer;
     }
 }

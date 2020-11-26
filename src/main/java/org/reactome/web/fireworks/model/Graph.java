@@ -62,38 +62,18 @@ public class Graph {
     }
 
     private void setMinX() {
-        this.minX = (Collections.min(this.nodes, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return Double.compare(o1.getMinX(), o2.getMinX());
-            }
-        })).getMinX();
+        this.minX = (Collections.min(this.nodes, Comparator.comparingDouble(Node::getMinX))).getMinX();
     }
 
     private void setMaxX() {
-        this.maxX = (Collections.max(this.nodes, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return Double.compare(o1.getMaxX(), o2.getMaxX());
-            }
-        })).getMaxX();
+        this.maxX = (Collections.max(this.nodes, Comparator.comparingDouble(Node::getMaxX))).getMaxX();
     }
 
     private void setMinY() {
-        this.minY = (Collections.min(this.nodes, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return Double.compare(o1.getMinY(), o2.getMinY());
-            }
-        })).getMinY();
+        this.minY = (Collections.min(this.nodes, Comparator.comparingDouble(Node::getMinY))).getMinY();
     }
 
     private void setMaxY() {
-        this.maxY = (Collections.max(this.nodes, new Comparator<Node>() {
-            @Override
-            public int compare(Node o1, Node o2) {
-                return Double.compare(o1.getMaxY(), o2.getMaxY());
-            }
-        })).getMaxY();
+        this.maxY = (Collections.max(this.nodes, Comparator.comparingDouble(Node::getMaxY))).getMaxY();
     }
 }

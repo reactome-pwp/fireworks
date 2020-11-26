@@ -804,8 +804,8 @@ class FireworksViewerImpl extends ResizeComposite implements FireworksViewer,
             if(!toSelect.equals(this.selected)) {
                 this.selected = toSelect;
                 //Note: the selection happens because other classes are listening to this event
-                this.eventBus.fireEventFromSource(new NodeSelectedEvent(this.selected), this);
             }
+            this.eventBus.fireEventFromSource(new NodeSelectedEvent(this.selected), this);
         }else{
             if(this.selected!=null) {
                 this.selected = null;

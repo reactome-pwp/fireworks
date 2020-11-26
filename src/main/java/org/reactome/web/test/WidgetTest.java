@@ -3,7 +3,7 @@ package org.reactome.web.test;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.*;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
@@ -26,27 +26,14 @@ public class WidgetTest implements EntryPoint {
     private class TestButton extends Button {
 
         TestButton(String html, final String stId, final FireworksViewer viewer) {
-            super(html, new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    viewer.resetHighlight();
-                    viewer.selectNode(stId);
-                }
+            super(html, (ClickHandler) event -> {
+                viewer.resetHighlight();
+                viewer.selectNode(stId);
             });
 
-            this.addMouseOverHandler(new MouseOverHandler() {
-                @Override
-                public void onMouseOver(MouseOverEvent event) {
-                    viewer.highlightNode(stId);
-                }
-            });
+            this.addMouseOverHandler(event -> viewer.highlightNode(stId));
 
-            this.addMouseOutHandler(new MouseOutHandler() {
-                @Override
-                public void onMouseOut(MouseOutEvent event) {
-                    viewer.resetHighlight();
-                }
-            });
+            this.addMouseOutHandler(event -> viewer.resetHighlight());
         }
     }
 
@@ -89,47 +76,20 @@ public class WidgetTest implements EntryPoint {
         vp.add(new TestButton("Repro..", "R-HSA-1474165", fireworks));
         vp.add(new TestButton("Striated", "R-HSA-390522", fireworks));
 
+        vp.add(new TestButton("HIV", "R-HSA-162587", fireworks));
+
+        vp.add(new Button("Select Node", (ClickHandler) event -> fireworks.selectNode("R-HSA-162594")));
+
         ResultFilter filterLow = new ResultFilter("TOTAL", null, true, null, null, null );
         ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.4, false, 1, 1000, null );
 
         FlowPanel fp = new FlowPanel();
-        fp.add(new Button("Reload Fireworks", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                loadSpeciesFireworks(currentSpecies);
-            }
-        }));
-        fp.add(new Button("OVERREPRESENTATION", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterLow);
-            }
-        }));
-        fp.add(new Button("OVERREPRESENTATION 2", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterHigh);
-            }
-        }));
-        fp.add(new Button("EXPRESSION", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterLow);
-            }
-        }));
-        fp.add(new Button("EXPRESSION 2", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterHigh);
-            }
-        }));
-        fp.add(new Button("SPECIES COMPARISON", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                fireworks.setAnalysisToken(URL.decode("MjAxNjAyMjkwNjU4MDNfNQ%253D%253D"), filterHigh);
-            }
-        }));
-
+        fp.add(new Button("Reload Fireworks", (ClickHandler) event -> loadSpeciesFireworks(currentSpecies)));
+        fp.add(new Button("OVERREPRESENTATION", (ClickHandler) event -> fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterLow)));
+        fp.add(new Button("OVERREPRESENTATION 2", (ClickHandler) event -> fireworks.setAnalysisToken("MjAxOTAzMjcxMDMxNTZfOA%253D%253D", filterHigh)));
+        fp.add(new Button("EXPRESSION", (ClickHandler) event -> fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterLow)));
+        fp.add(new Button("EXPRESSION 2", (ClickHandler) event -> fireworks.setAnalysisToken("MjAxOTAzMjAxMTA5MzlfMjI%253D", filterHigh)));
+        fp.add(new Button("SPECIES COMPARISON", (ClickHandler) event -> fireworks.setAnalysisToken(URL.decode("MjAxNjAyMjkwNjU4MDNfNQ%253D%253D"), filterHigh)));
 
         SplitLayoutPanel slp = new SplitLayoutPanel(10);
         slp.addWest(vp, 80);
