@@ -8,6 +8,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import org.reactome.web.fireworks.client.FireworksFactory;
 import org.reactome.web.fireworks.client.StaticIllustrationPanel;
 import org.reactome.web.fireworks.events.*;
 import org.reactome.web.fireworks.handlers.*;
@@ -74,7 +75,7 @@ public class StaticIllustrationThumbnail extends FlowPanel
                 if (databaseObject instanceof Event) {
                     final Event event = (Event) databaseObject;
                     for (Figure figure : event.getFigure()) {
-                        diagramIllustrationURL = figure.getUrl();
+                        diagramIllustrationURL = FireworksFactory.ILLUSTRATION_SERVER + figure.getUrl();
                         createMainStaticIllustrationFlowPanel(databaseObject, diagramIllustrationURL);
                     }
                 }
