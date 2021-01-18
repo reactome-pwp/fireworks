@@ -24,4 +24,5 @@
     <source path="profiles"/>
     <source path="search"/>
     <source path="util"/>
+    <source path="thumbnails"/>
 </module>

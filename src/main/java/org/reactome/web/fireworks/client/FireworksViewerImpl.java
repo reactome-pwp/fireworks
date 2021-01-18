@@ -54,7 +54,7 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
         AnalysisResetHandler, ExpressionColumnChangedHandler, OverlayTypeChangedHandler,
         ControlActionHandler, ProfileChangedHandler,
         SuggestionSelectedHandler, SuggestionHoveredHandler,
-        IllustrationSelectedHandler, CanvasExportRequestedHandler,
+        CanvasExportRequestedHandler,
         KeyDownHandler, SearchFilterHandler, SearchResetHandler,
         SearchItemHoveredHandler, SearchItemSelectedHandler,
         NodeFlagRequestedHandler, NodeFlaggedResetHandler {
@@ -68,6 +68,8 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
     private FireworksData data;
 
     private String token;
+
+    private Integer expColumn;
 
     private boolean coverage;
 
@@ -260,6 +262,7 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
     public void onExpressionColumnChanged(ExpressionColumnChangedEvent e) {
         this.canvases.setColumn(e.getColumn()); //First the column needs to be set in the canvases
         this.forceFireworksDraw = true;
+        this.expColumn = e.getColumn();
     }
 
     @Override
@@ -301,7 +304,7 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
 
     @Override
     public void onCanvasExportRequested(CanvasExportRequestedEvent event) {
-        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, filter.getResource());
+        this.canvases.showExportDialog(selected, flagTerm, includeInteractors, token, filter.getResource(), expColumn);
     }
 
     @Override
@@ -316,11 +319,6 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
     @Override
     public void onSearchItemSelected(SearchItemSelectedEvent event) {
         selectNode(event.getSelectedIdentifier());
-    }
-
-    @Override
-    public void onIllustrationSelected(IllustrationSelectedEvent event) {
-        this.canvases.setIllustration(event.getUrl());
     }
 
     @Override
@@ -733,7 +731,6 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
         this.eventBus.addHandler(ExpressionColumnChangedEvent.TYPE, this);
         this.eventBus.addHandler(FireworksVisibleAreaChangedEvent.TYPE, this);
         this.eventBus.addHandler(FireworksZoomEvent.TYPE, this);
-        this.eventBus.addHandler(IllustrationSelectedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlagRequestedEvent.TYPE, this);
         this.eventBus.addHandler(NodeFlaggedResetEvent.TYPE, this);
         this.eventBus.addHandler(ProfileChangedEvent.TYPE, this);
@@ -811,8 +808,8 @@ public class FireworksViewerImpl extends ResizeComposite implements FireworksVie
             if(!toSelect.equals(this.selected)) {
                 this.selected = toSelect;
                 //Note: the selection happens because other classes are listening to this event
-                this.eventBus.fireEventFromSource(new NodeSelectedEvent(this.selected), this);
             }
+            this.eventBus.fireEventFromSource(new NodeSelectedEvent(this.selected), this);
         }else{
             if(this.selected!=null) {
                 this.selected = null;

@@ -6,5 +6,7 @@
     left: 50%;
 
     height: auto;
+
+    z-index: 0;
     /*background-color: crimson;*/
 }

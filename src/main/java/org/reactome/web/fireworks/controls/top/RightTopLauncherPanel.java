@@ -10,7 +10,6 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import org.reactome.web.fireworks.controls.common.IconButton;
-import org.reactome.web.fireworks.controls.top.illustrations.Illustrations;
 import org.reactome.web.fireworks.controls.top.key.PathwayOverviewKey;
 import org.reactome.web.fireworks.events.CanvasExportRequestedEvent;
 
@@ -21,10 +20,8 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
 
     private EventBus eventBus;
 
-    private Illustrations diagramIllustrations;
     private PathwayOverviewKey pathwayOverviewKey;
 
-    private Button illustrationsBtn;
     private Button exportBtn;
     private Button pathwayOverviewKeyBtn;
 
@@ -32,11 +29,7 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
         this.setStyleName(RESOURCES.getCSS().launcherPanel());
 
         this.eventBus = eventBus;
-        this.diagramIllustrations = new Illustrations(eventBus);
         this.pathwayOverviewKey = new PathwayOverviewKey(eventBus);
-
-        this.illustrationsBtn = new IconButton(RESOURCES.illustrationsIcon(), RESOURCES.getCSS().illustrations(), "Show illustrations", this);
-        this.add(illustrationsBtn);
 
         this.exportBtn = new IconButton(RESOURCES.exportIcon(), RESOURCES.getCSS().export(), "Export", this);
         this.add(exportBtn);
@@ -58,13 +51,14 @@ public class RightTopLauncherPanel extends FlowPanel implements ClickHandler {
             } else {
                 this.pathwayOverviewKey.showRelativeTo(this.pathwayOverviewKeyBtn);
             }
-        } else if (btn.equals(this.illustrationsBtn)) {
-            if (this.diagramIllustrations.isShowing()) {
-                this.diagramIllustrations.hide();
-            } else {
-                this.diagramIllustrations.showRelativeTo(btn);
-            }
         }
+//        else if (btn.equals(this.illustrationsBtn)) {
+//            if (this.diagramIllustrations.isShowing()) {
+//                this.diagramIllustrations.hide();
+//            } else {
+//                this.diagramIllustrations.showRelativeTo(btn);
+//            }
+//        }
     }
 
 

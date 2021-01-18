@@ -49,12 +49,13 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
     private Coordinate mouseDown = null;
     private Coordinate delta = null;
 
+    private int width;
+
     FireworksThumbnail(EventBus eventBus, Graph graph) {
         this.eventBus = eventBus;
         this.graph = graph;
         this.factor = HEIGHT / graph.getMaxY();
-        int width = (int) Math.ceil((graph.getMaxX() + 25) * factor);
-
+        this.width = (int) Math.ceil((graph.getMaxX()-200) * factor);
         this.thumbnail = this.createCanvas(width, HEIGHT);
         this.flag = this.createCanvas(width, HEIGHT);
         this.highlight = this.createCanvas(width, HEIGHT);
@@ -64,6 +65,10 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
         this.setStyle(width, HEIGHT);
         this.addHandlers();
         this.drawThumbnail();
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public void clearFlags(){
@@ -278,13 +283,13 @@ class FireworksThumbnail extends AbsolutePanel implements HasHandlers, MouseDown
     }
 
     private void setStyle(double w, double h){
+        this.getElement().getStyle().setProperty("position", "");
         this.setWidth(w + "px"); this.setHeight(h + "px");
         Style style = this.getElement().getStyle();
         style.setBackgroundColor("white");
         style.setBorderStyle(Style.BorderStyle.SOLID);
         style.setBorderWidth(1, Style.Unit.PX);
         style.setBorderColor("grey");
-        style.setPosition(Style.Position.ABSOLUTE);
         style.setBottom(0, Style.Unit.PX);
     }
 }
