@@ -325,8 +325,19 @@ public class Node extends FireworkObject implements Drawable, QuadTreeBox, Compa
 
         if (!isInsideFilter()) {
             this.enrichmentColour = FireworksColours.PROFILE.getNodeHitColour();
-            for (Edge edge : this.edgesTo){
+            for (Edge edge : this.edgesTo) {
                 edge.setEnrichmentColour(FireworksColours.PROFILE.getEdgeHitColour());
+            }
+            // adding below to keep the same hit result after filtering expression/GSA analysis result 23/02/21
+            List<Double> exp = this.statistics.getExp();
+            if (exp != null) {
+                this.expColours = new ArrayList<>();
+                List<String> edgeExpColours = new ArrayList<>();
+                for (Double v : exp) {
+                    this.expColours.add(FireworksColours.PROFILE.getNodeHitColour());
+                    edgeExpColours.add(FireworksColours.PROFILE.getEdgeHitColour());
+                }
+                for (Edge edge : this.edgesTo) edge.setExpColours(edgeExpColours);
             }
             return;
         }
