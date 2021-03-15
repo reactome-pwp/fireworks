@@ -12,6 +12,7 @@ import org.reactome.web.fireworks.handlers.*;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.profiles.FireworksProfile;
+import org.reactome.web.fireworks.util.Console;
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -196,6 +197,9 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
                         y = (int) Math.round(200 * pValue / 0.05) + 5;
                     }
                 }
+            } else {
+                // prevent drawing ticks for fadeout pathways in enrichment analysis coverage view
+                y = null;
             }
 
             if (y != null) {
@@ -233,6 +237,9 @@ public class EnrichmentLegend extends LegendPanel implements AnalysisPerformedHa
                         y = (int) Math.round(200 * pValue / 0.05) + 5;
                     }
                 }
+            } else {
+                // prevent drawing ticks for fadeout pathways in enrichment analysis coverage view
+                y = null;
             }
 
             if (y != null) {
