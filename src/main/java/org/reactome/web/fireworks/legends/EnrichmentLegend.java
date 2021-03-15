@@ -12,7 +12,7 @@ import org.reactome.web.fireworks.handlers.*;
 import org.reactome.web.fireworks.model.Node;
 import org.reactome.web.fireworks.profiles.FireworksColours;
 import org.reactome.web.fireworks.profiles.FireworksProfile;
-import org.reactome.web.fireworks.util.Console;
+
 
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
