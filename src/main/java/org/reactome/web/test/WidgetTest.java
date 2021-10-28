@@ -23,7 +23,7 @@ public class WidgetTest implements EntryPoint {
      * Only used for testing purposes
      * It subscribe to onClick and onMouseOver to simulate the future Hierarchy tree
      */
-    private class TestButton extends Button {
+    private static class TestButton extends Button {
 
         TestButton(String html, final String stId, final FireworksViewer viewer) {
             super(html, (ClickHandler) event -> {
@@ -64,7 +64,7 @@ public class WidgetTest implements EntryPoint {
         });
     }
 
-    public void initialise(String json){
+    public void initialise(String json) {
         final FireworksViewer fireworks = FireworksFactory.createFireworksViewer(json);
 
         VerticalPanel vp = new VerticalPanel();
@@ -80,8 +80,8 @@ public class WidgetTest implements EntryPoint {
 
         vp.add(new Button("Select Node", (ClickHandler) event -> fireworks.selectNode("R-HSA-162594")));
 
-        ResultFilter filterLow = new ResultFilter("TOTAL", null, true, null, null, null );
-        ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.4, false, 1, 1000, null );
+        ResultFilter filterLow = new ResultFilter("TOTAL", null, true, null, null, null);
+        ResultFilter filterHigh = new ResultFilter("UNIPROT", 0.4, false, 1, 1000, null);
 
         FlowPanel fp = new FlowPanel();
         fp.add(new Button("Reload Fireworks", (ClickHandler) event -> loadSpeciesFireworks(currentSpecies)));
@@ -106,7 +106,7 @@ public class WidgetTest implements EntryPoint {
 
     }
 
-    public void loadSpeciesFireworks(String species){
+    public void loadSpeciesFireworks(String species) {
         this.currentSpecies = species;
         String url = "/download/current/fireworks/" + species + ".json?v=" + System.currentTimeMillis();
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
@@ -115,24 +115,25 @@ public class WidgetTest implements EntryPoint {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
-                    try{
+                    try {
                         initialise(response.getText());
-                    }catch (Exception ex){
-                        if(!GWT.isScript()) ex.printStackTrace();
+                    } catch (Exception ex) {
+                        if (!GWT.isScript()) ex.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onError(Request request, Throwable exception) {
-                    if(!GWT.isScript()) exception.printStackTrace();
+                    if (!GWT.isScript()) exception.printStackTrace();
                 }
             });
-        }catch (RequestException ex) {
-            if(!GWT.isScript()) ex.printStackTrace();
+        } catch (RequestException ex) {
+            if (!GWT.isScript()) ex.printStackTrace();
         }
 
     }
 
-    private String[] getPathways(String text){
+    private String[] getPathways(String text) {
         return text.split("\\n");
     }
 

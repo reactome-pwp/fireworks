@@ -14,6 +14,7 @@ import org.reactome.web.pwp.model.client.classes.DatabaseObject;
 import org.reactome.web.pwp.model.client.classes.Pathway;
 import org.reactome.web.pwp.model.client.classes.Publication;
 import org.reactome.web.pwp.model.client.factory.DatabaseObjectFactory;
+import org.reactome.web.pwp.model.client.util.ResponseUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -54,7 +55,7 @@ public abstract class InteractorOccurencesFactory {
                             handler.onInteractorOccurencesReceived(getPathways(response.getText()));
                             break;
                         default:
-                            handler.onInteractorOccurencesError(response.getStatusText());
+                            handler.onInteractorOccurencesError(ResponseUtils.getStatusText(response.getStatusCode()));
                     }
                 }
                 @Override
